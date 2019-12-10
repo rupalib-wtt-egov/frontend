@@ -342,7 +342,19 @@ export const getBill = async queryObject => {
     console.log(error);
   }
 };
-
+export const calculateBill = async queryObject => {
+  try {
+    const response = await httpRequest(
+      "post",
+      "/tl-calculator/v1/_getbill",
+      "",
+      queryObject
+    );
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
 export const getReceipt = async queryObject => {
   try {
     const response = await httpRequest(
@@ -1022,10 +1034,10 @@ export const createEstimateData = async (
   //     : payload.billResponse &&
   //       getEstimateData(payload.billResponse.Bill, false, LicenseData)
   //   : [];
-const fetchBillResponse=await getBill(getBillQueryObj)
+const fetchBillResponse=await getBill(getBillQueryObj);
   const payload = isPAID
     ? await getReceipt(queryObj.filter(item => item.key !== "businessService"))
-    : fetchBillResponse.Bill[0];
+    : fetchBillResponse&&fetchBillResponse.Bill&&fetchBillResponse.Bill[0];
   let estimateData = payload
     ? isPAID
       ?payload&&payload.Payments&&payload.Payments.length>0&& getEstimateData(payload.Payments[0].paymentDetails[0].bill, isPAID, LicenseData)
@@ -1035,9 +1047,13 @@ const fetchBillResponse=await getBill(getBillQueryObj)
     estimateData=estimateData||[];
   dispatch(prepareFinalObject(jsonPath, estimateData));
   const accessories = get(LicenseData, "tradeLicenseDetail.accessories", []);
-  payload &&
-    payload.billingSlabIds &&
-    getBillingSlabData(dispatch, payload.billingSlabIds, tenantId, accessories);
+  if(payload){
+    const getBillResponse=await calculateBill(getBillQueryObj);
+    getBillResponse &&
+    getBillResponse.billingSlabIds &&
+      getBillingSlabData(dispatch, getBillResponse.billingSlabIds, tenantId, accessories);
+  }
+
 
   /** Waiting for estimate to load while downloading confirmation form */
   var event = new CustomEvent("estimateLoaded", { detail: true });
@@ -2044,7 +2060,7 @@ export const getTextToLocalMapping = label => {
       return getLocaleLabels("Rejected", "TL_REJECTED", localisationLabels);
     case "CANCELLED":
       return getLocaleLabels("Cancelled", "TL_CANCELLED", localisationLabels);
-    case "PENDINGAPPROVAL ":
+    case "PENDINGAPPROVAL":
       return getLocaleLabels(
         "Pending for Approval",
         "WF_NEWTL_PENDINGAPPROVAL",
@@ -2079,3 +2095,7 @@ export const getTextToLocalMapping = label => {
       );
   }
 };
+
+export const checkValueForNA = (value) => {
+  return value ? value : "NA";
+}

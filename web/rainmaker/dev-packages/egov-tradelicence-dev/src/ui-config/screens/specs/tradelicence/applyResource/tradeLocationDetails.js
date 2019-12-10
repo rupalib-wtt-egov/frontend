@@ -145,6 +145,9 @@ export const tradeLocationDetails = getCommonCard(
           labelName: "Door/House No.",
           labelKey: "TL_NEW_TRADE_DETAILS_DOOR_NO_LABEL"
         },
+        props:{
+          className:"applicant-details-error"
+        },
         placeholder: {
           labelName: "Enter Door/House No.",
           labelKey: "TL_NEW_TRADE_DETAILS_DOOR_NO_PLACEHOLDER"
@@ -157,6 +160,9 @@ export const tradeLocationDetails = getCommonCard(
           labelName: "Building/Colony Name",
           labelKey: "TL_NEW_TRADE_DETAILS_BLDG_NAME_LABEL"
         },
+        props:{
+          className:"applicant-details-error"
+        },
         placeholder: {
           labelName: "Enter Building/Colony Name",
           labelKey: "TL_NEW_TRADE_DETAILS_BLDG_NAME_PLACEHOLDER"
@@ -168,6 +174,9 @@ export const tradeLocationDetails = getCommonCard(
         label: {
           labelName: "Street Name",
           labelKey: "TL_NEW_TRADE_DETAILS_SRT_NAME_LABEL"
+        },
+        props:{
+          className:"applicant-details-error"
         },
         placeholder: {
           labelName: "Enter Street Name",
@@ -213,6 +222,9 @@ export const tradeLocationDetails = getCommonCard(
         label: {
           labelName: "Pincode",
           labelKey: "TL_NEW_TRADE_DETAILS_PIN_LABEL"
+        },
+        props:{
+          className:"applicant-details-error"
         },
         placeholder: {
           labelName: "Enter Pincode",

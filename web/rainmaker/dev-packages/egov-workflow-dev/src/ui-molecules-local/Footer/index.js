@@ -59,8 +59,9 @@ class Footer extends React.Component {
     handleFieldChange(`${dataPath}[0].comment`, "");
     handleFieldChange(`${dataPath}[0].assignee`, "");
     if (item.isLast) {
-      const url = process.env.NODE_ENV === "development" ? item.buttonUrl : `employee/${item.buttonUrl}` ;
-      window.location.href = `${window.origin}/${url}`;
+      const url = process.env.NODE_ENV === "development" ? item.buttonUrl : item.buttonUrl ;
+      //window.location.href = `${window.origin}/${url}`;
+      setRoute(url);
       return;
     }
     if (item.showEmployeeList) {
@@ -121,7 +122,7 @@ class Footer extends React.Component {
         style={{ textAlign: "right" }}
       >
         <Container >
-          <Item xs={12} sm={12} className="wf-footer">
+          <Item xs={12} sm={12} className="wf-footer-container">
             {contractData &&
               contractData.map(item => {
                 const { buttonLabel, moduleName } = item;
@@ -129,7 +130,7 @@ class Footer extends React.Component {
                   <Button
                     color={color}
                     variant={variant}
-                    className="wf-button"
+                    className="wf-footer-button"
                     onClick={() => this.openActionDialog(item)}
                     style={{
                    //   minWidth: "200px",
