@@ -8,8 +8,6 @@ import {
 import {
   getUserInfo
 } from "egov-ui-kit/utils/localStorageUtils";
-import get from "lodash/get";
-import set from "lodash/set";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import {
   getQueryArg,
@@ -33,6 +31,9 @@ import { getReviewDocuments } from "./applyResource/review-documents";
 import { loadReceiptGenerationData } from "../utils/receiptTransformer";
 import get from "lodash/get";
 import set from "lodash/set";
+import {
+  prepareFinalObject
+} from "egov-ui-framework/ui-redux/screen-configuration/actions";
 
 const tenantId = getQueryArg(window.location.href, "tenantId");
 let applicationNumber = getQueryArg(window.location.href, "applicationNumber");
