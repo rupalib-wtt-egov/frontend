@@ -656,27 +656,14 @@ export const getHeaderSideText = (status, licenseNo = null) => {
   }
 };
 
-export const getMdmsData = async (  tenantId) => {
-  let queryObject = {
-    MdmsCriteria: {
-      tenantId: tenantId,
-      moduleDetails: [
-        {
-          moduleName: "tenant",
-          masterDetails: [{ name: "tenants" }]
-        }
-      ]
-    }
-  };
+export const getMdmsData = async queryObject => {
   try {
     const response = await httpRequest(
       "post",
-      "egov-mdms-service/v1/_search",
-    "_search",
-      [],
-            queryObject
+      "egov-mdms-service/v1/_get",
+      "",
+      queryObject
     );
-   // console.log(response);
     return response;
   } catch (error) {
     console.log(error);
