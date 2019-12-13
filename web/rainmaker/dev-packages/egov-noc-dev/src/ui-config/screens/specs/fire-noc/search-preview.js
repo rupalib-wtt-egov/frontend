@@ -14,13 +14,14 @@ import {
   getTransformedLocale,
   setBusinessServiceDataToLocalStorage
 } from "egov-ui-framework/ui-utils/commons";
+import { createEstimateData } from "../utils/index";
 import { fetchLocalizationLabel } from "egov-ui-kit/redux/app/actions";
 import { getLocale } from "egov-ui-kit/utils/localStorageUtils";
 import jp from "jsonpath";
 import get from "lodash/get";
 import set from "lodash/set";
 import { getSearchResults } from "../../../../ui-utils/commons";
-import { searchBill } from "../utils/index";
+import { searchBill, generateBill ,createBill} from "../utils/index";
 import generatePdf from "../utils/receiptPdf";
 import { loadPdfGenerationData } from "../utils/receiptTransformer";
 import { citizenFooter } from "./searchResource/citizenFooter";
@@ -331,15 +332,16 @@ const setSearchResponse = async (
 const screenConfig = {
   uiFramework: "material-ui",
   name: "search-preview",
-  beforeInitScreen: (action, state, dispatch) => {
-    const applicationNumber = getQueryArg(
-      window.location.href,
-      "applicationNumber"
+  beforeInitScreen:  (action, state, dispatch) => {
+    let applicationNumber =
+    getQueryArg(window.location.href, "applicationNumber") ||
+    get(
+      state.screenConfiguration.preparedFinalObject,
+      "FireNOCs[0].fireNOCDetails.applicationNumber"
     );
     const tenantId = getQueryArg(window.location.href, "tenantId");
+    generateBill(dispatch, applicationNumber, tenantId); 
     dispatch(fetchLocalizationLabel(getLocale(), tenantId, tenantId));
-    searchBill(dispatch, applicationNumber, tenantId);
-
     setSearchResponse(state, dispatch, applicationNumber, tenantId);
 
     const queryObject = [
@@ -374,7 +376,6 @@ const screenConfig = {
       "screenConfig.components.div.children.body.children.cardContent.children.documentsSummary.children.cardContent.children.header.children.editSection.visible",
       false
     );
-
     return action;
   },
   components: {
