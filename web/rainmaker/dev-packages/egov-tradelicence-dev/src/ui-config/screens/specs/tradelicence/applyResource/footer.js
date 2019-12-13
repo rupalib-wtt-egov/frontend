@@ -2,7 +2,7 @@ import {
   getLabel,
   dispatchMultipleFieldChangeAction
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { download } from "egov-common/ui-utils/commons"
+import {download} from "egov-common/ui-utils/commons"
 import { applyTradeLicense } from "../../../../../ui-utils/commons";
 import {
   getButtonVisibility,
@@ -622,11 +622,9 @@ export const footerReview = (
   let receiptDownloadObject = {
     label: { labelName: "Receipt", labelKey: "TL_RECEIPT" },
     link: () => {
-
-
       const receiptQueryString = [
-        { key: "consumerCodes", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "applicationNumber") },
-        { key: "tenantId", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "tenantId") }
+        { key: "consumerCodes", value:  get(state.screenConfiguration.preparedFinalObject.Licenses[0], "applicationNumber")},
+        { key: "tenantId", value:get(state.screenConfiguration.preparedFinalObject.Licenses[0], "tenantId") }
       ]
       download(receiptQueryString);
       // generateReceipt(state, dispatch, "receipt_download");
@@ -669,6 +667,8 @@ export const footerReview = (
       ];
       break;
     case "APPLIED":
+    case "FIELDINSPECTION":
+    case "PENDINGAPPROVAL":
     case "PENDINGPAYMENT":
       downloadMenu = [applicationDownloadObject];
       printMenu = [applicationPrintObject];
@@ -876,8 +876,8 @@ export const downloadPrintContainer = (
     label: { labelName: "Receipt", labelKey: "TL_RECEIPT" },
     link: () => {
       const receiptQueryString = [
-        { key: "consumerCodes", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "applicationNumber") },
-        { key: "tenantId", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "tenantId") }
+        { key: "consumerCodes", value:  get(state.screenConfiguration.preparedFinalObject.Licenses[0], "applicationNumber")},
+        { key: "tenantId", value:get(state.screenConfiguration.preparedFinalObject.Licenses[0], "tenantId") }
       ]
       download(receiptQueryString);
     },

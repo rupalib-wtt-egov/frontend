@@ -1019,6 +1019,7 @@ const getCertificateData = (transformedData, ulbLogo) => {
 };
 
 const generateReceipt = async (state, dispatch, type) => {
+//  console.log("Transformed Data--",transformedData);
   pdfMakeCustom.vfs = pdfFonts.vfs;
   pdfMakeCustom.fonts = {
     Camby:{
