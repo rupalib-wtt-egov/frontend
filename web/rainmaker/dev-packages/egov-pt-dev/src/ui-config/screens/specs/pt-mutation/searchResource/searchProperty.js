@@ -92,6 +92,35 @@ import {
             sm: 4
           }
         },
+        resetButton: {
+            componentPath: "Button",
+            gridDefination: {
+              xs: 12,
+              sm: 4
+            },
+            props: {
+              variant: "contained",
+              style: {
+                color: "white",
+    
+                backgroundColor: "rgba(0, 0, 0, 0.6000000238418579)",
+                borderRadius: "2px",
+                width: "80%",
+                height: "48px"
+              }
+            },
+            children: {
+              buttonLabel: getLabel({
+                labelName: "Reset",
+                labelKey: "PT_HOME_RESET_RESULTS_BUTTON_SEARCH"
+              })
+            },
+            onClickDefination: {
+              action: "condition",
+              callBack: searchApiCall
+            }
+          },
+
         searchButton: {
           componentPath: "Button",
           gridDefination: {
@@ -120,6 +149,7 @@ import {
             callBack: searchApiCall
           }
         },
+        
         lastCont: {
           uiFramework: "custom-atoms",
           componentPath: "Div",
