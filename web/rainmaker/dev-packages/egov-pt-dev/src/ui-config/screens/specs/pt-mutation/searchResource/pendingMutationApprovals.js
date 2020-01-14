@@ -14,65 +14,65 @@ export const pendingMutationApprovals = {
       props: {
         data: [
           {
-            "Application No": 1234,
-            "Trade Name": "Matchbox Plant",
+            "Property Tax Unique Id": 1234,
             "Owner Name": "Satinder Singh",
-            "Locality/Mohalla": "Gurudwara Mohalla",
-            "Payment Date": "12/08/2018",
-            "Days Elapsed": "2 Days"
+            "Guardian Name": "Gurudwara Mohalla",
+            "Existing Property Id": 45678,
+            "Address":"Amritsar, Sher Galli"
+           // "Days Elapsed": "2 Days"
           },
           {
-            "Application No": 1234,
-            "Trade Name": "Matchbox Plant",
+            "Property Tax Unique Id": 1234,
             "Owner Name": "Satinder Singh",
-            "Locality/Mohalla": "Railway Colony",
-            "Payment Date": "12/08/2018",
-            "Days Elapsed": "10 Days"
+            "Guardian Name": "Gurudwara Mohalla",
+            "Existing Property Id": 45678,
+            "Address":"Amritsar, Sher Galli"
+           // "Days Elapsed": "2 Days"
           },
           {
-            "Application No": 1234,
-            "Trade Name": "Matchbox Plant",
+            "Property Tax Unique Id": 1234,
             "Owner Name": "Satinder Singh",
-            "Locality/Mohalla": "Gurudwara Mohalla",
-            "Payment Date": "12/08/2018",
-            "Days Elapsed": "2 Days"
+            "Guardian Name": "Gurudwara Mohalla",
+            "Existing Property Id": 45678,
+            "Address":"Amritsar, Sher Galli"
+          //  "Days Elapsed": "2 Days"
           },
           {
-            "Application No": 1234,
-            "Trade Name": "Matchbox Plant",
+            "Property Tax Unique Id": 1234,
             "Owner Name": "Satinder Singh",
-            "Locality/Mohalla": "Assi Mohalla",
-            "Payment Date": "12/08/2018",
-            "Days Elapsed": "2 Days"
+            "Guardian Name": "Gurudwara Mohalla",
+            "Existing Property Id": 45678,
+            "Address":"Amritsar, Sher Galli"
+         //   "Days Elapsed": "2 Days"
           }
         ],
         columns: {
-          "Application No": {},
-          "Trade Name": {},
+          "Property Tax Unique Id": {},
           "Owner Name": {},
-          "Locality/Mohalla": {},
-          "Payment Date": {},
-          "Days Elapsed": {
-            format: value => {
-              let color = "";
-              if (value.toLowerCase().indexOf("10") !== -1) {
-                color = "green";
-              } else if (value.toLowerCase().indexOf("2") !== -1) {
-                color = "red";
-              }
-              return (
-                <span
-                  style={{
-                    color: color,
-                    fontSize: "14px",
-                    fontWeight: 400
-                  }}
-                >
-                  {value}
-                </span>
-              );
-            }
-          }
+          "Guardian Name": {},
+          "Existing Property Id": {},
+          "Address": {},
+          // "Days Elapsed": {
+          //   format: value => {
+          //     let color = "";
+          //     if (value.toLowerCase().indexOf("10") !== -1) {
+          //       color = "green";
+          //     } else if (value.toLowerCase().indexOf("2") !== -1) {
+          //       color = "red";
+          //     }
+          //     return (
+          //       <span
+          //         style={{
+          //           color: color,
+          //           fontSize: "14px",
+          //           fontWeight: 400
+          //         }}
+          //       >
+          //         {value}
+          //       </span>
+          //     );
+          //   }
+          // }
         },
         title: "Pending for your Approval (4)",
         options: {

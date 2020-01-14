@@ -10,6 +10,8 @@ import {
   import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
   // import { progressStatus } from "./searchResource/progressStatus";
   import { searchMutationResults } from "./searchResource/searchMutationResults";
+  import {searchApplications} from "./searchResource/searchApplications";
+  import {searchMutationApplicationResults} from "./searchResource/searchMutationApplications"
   import { localStorageGet,getTenantId } from "egov-ui-kit/utils/localStorageUtils";
   import find from "lodash/find";
   
@@ -124,10 +126,13 @@ import {
               }
             }
           },
-          pendingMutationApprovals,
           searchProperty,
           breakAfterSearch: getBreak(),
-          searchMutationResults
+         searchMutationResults,     
+          searchApplications,
+          breakAfterSearch: getBreak(),
+          searchMutationApplicationResults,
+
         }
       }
     }

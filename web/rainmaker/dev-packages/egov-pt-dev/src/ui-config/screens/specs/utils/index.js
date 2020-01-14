@@ -703,33 +703,47 @@ export const getRequiredDocData = async (action, state, dispatch) => {
 export const getTextToLocalMapping = label => {
   const localisationLabels = getTransformedLocalStorgaeLabels();
   switch (label) {
-    case "Application No":
+    case "Property Tax Unique Id":
       return getLocaleLabels(
-        "Application No",
-        "TL_COMMON_TABLE_COL_APP_NO",
+        "Property Tax Unique Id",
+        "PT_COMMON_TABLE_COL_PT_ID",
         localisationLabels
       );
 
-    case "NOC No":
-      return getLocaleLabels(
-        "NOC No",
-        "NOC_COMMON_TABLE_COL_NOC_NO_LABEL",
-        localisationLabels
-      );
+      case "Application No":
+        return getLocaleLabels(
+          "Application No.",
+          "PT_COMMON_TABLE_COL_APP_NO",
+          localisationLabels
+        );
 
-    case "NOC Type":
-      return getLocaleLabels("NOC Type", "NOC_TYPE_LABEL", localisationLabels);
+        case "Application Type":
+          return getLocaleLabels(
+            "Application Type",
+            "PT_COMMON_TABLE_COL_APP_TYPE",
+            localisationLabels
+          );
+  
     case "Owner Name":
       return getLocaleLabels(
         "Owner Name",
-        "NOC_COMMON_TABLE_COL_OWN_NAME_LABEL",
+        "PT_COMMON_TABLE_COL_OWNER_NAME",
         localisationLabels
       );
 
-    case "Application Date":
+    case "Guardian Name":
+      return getLocaleLabels("Guardian Name", "PT_GUARDIAN_NAME", localisationLabels);
+    case "Existing Property Id":
       return getLocaleLabels(
-        "Application Date",
-        "NOC_COMMON_TABLE_COL_APP_DATE_LABEL",
+        "Existing Property Id",
+        "PT_COMMON_COL_EXISTING_PROP_ID",
+        localisationLabels
+      );
+
+    case "Address":
+      return getLocaleLabels(
+        "Address",
+        "PT_COMMON_COL_ADDRESS",
         localisationLabels
       );
 

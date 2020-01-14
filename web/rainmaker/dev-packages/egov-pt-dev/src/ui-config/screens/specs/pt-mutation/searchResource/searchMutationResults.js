@@ -5,18 +5,19 @@ import {
   getTextToLocalMapping
 } from "../../utils";
 
+
 export const searchMutationResults = {
   uiFramework: "custom-molecules",
   // moduleName: "egov-tradelicence",
   componentPath: "Table",
-  visible: false,
+  visible: true,
   props: {
     columns: [
-      getTextToLocalMapping("Application No"),
-      getTextToLocalMapping("License No"),
-      getTextToLocalMapping("Trade Name"),
+      getTextToLocalMapping("Property Tax Unique Id"),
       getTextToLocalMapping("Owner Name"),
-      getTextToLocalMapping("Application Date"),
+      getTextToLocalMapping("Guardian Name"),
+      getTextToLocalMapping("Existing Property Id"),
+      getTextToLocalMapping("Address"),
       {
         name: getTextToLocalMapping("Status"),
         options: {
@@ -74,7 +75,44 @@ export const searchMutationResults = {
         });
         return { data: finalData, currentOrder: !order ? "asc" : "desc" };
       }
+    },
+    data:[{
+      "Property Tax Unique Id": "PT-16191-0789580",
+      "Owner Name": "Satinder Singh",
+      "Guardian Name": "Gurudwara Mohalla",
+      "Existing Property Id": 45678,
+      "Address":"Amritsar, Sher Galli",
+      "Status":"PENDINGPAYMENT"
+     // "Days Elapsed": "2 Days"
+    },
+    {
+      "Property Tax Unique Id": "PT-5033-203580",
+      "Owner Name": "Satinder Singh",
+      "Guardian Name": "Gurudwara Mohalla",
+      "Existing Property Id": 45678,
+      "Address":"Amritsar, Sher Galli",
+      "Status":"APPROVED"
+     // "Days Elapsed": "2 Days"
+    },
+    {
+      "Property Tax Unique Id": "PT-1013-001580",
+      "Owner Name": "Satinder Singh",
+      "Guardian Name": "Gurudwara Mohalla",
+      "Existing Property Id": 45678,
+      "Address":"Amritsar, Sher Galli",
+      "Status":"DOCUMENTVERIFY"
+    //  "Days Elapsed": "2 Days"
+    },
+    {
+      "Property Tax Unique Id": "PT-1213-006280",
+      "Owner Name": "Satinder Singh",
+      "Guardian Name": "Gurudwara Mohalla",
+      "Existing Property Id": 45678,
+      "Address":"Amritsar, Sher Galli",
+      "Status":"APPROVED"
+   //   "Days Elapsed": "2 Days"
     }
+  ],
   }
 };
 
