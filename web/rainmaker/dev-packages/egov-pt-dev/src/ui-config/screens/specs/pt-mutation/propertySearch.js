@@ -3,6 +3,7 @@ import {
     getLabel,
     getBreak
   } from "egov-ui-framework/ui-config/screens/specs/utils";
+  import captureMutationDetails from "./capture-mutation-details";
   import { searchProperty } from "./searchResource/searchProperty";
   import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
   import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
@@ -13,6 +14,7 @@ import {
   import {searchApplications} from "./searchResource/searchApplications";
   import {searchMutationApplicationResults} from "./searchResource/searchMutationApplications"
   import { localStorageGet,getTenantId } from "egov-ui-kit/utils/localStorageUtils";
+  import {Tabs} from "egov-ui-kit/components/Tabs";
   import find from "lodash/find";
   
   const hasButton = getQueryArg(window.location.href, "hasButton");
@@ -24,37 +26,17 @@ import {
     dispatch(prepareFinalObject("LicensesTemp", []));
     dispatch(setRoute(`/tradelicence/apply?tenantId=${tenant}`));
   };
+
+  console.log(captureMutationDetails)
   
   const header = getCommonHeader({
     labelName: "Property Tax",
     labelKey: "PROPERTY_TAX"
   });
-  const tradeLicenseSearchAndResult = {
+  const screenConfig = {
     uiFramework: "material-ui",
-    name: "search",
-    beforeInitScreen: (action, state, dispatch) => {
-      const businessServiceData = JSON.parse(
-        localStorageGet("businessServiceData")
-      );
-      const data = find(businessServiceData, { businessService: "NewTL" });
-      const { states } = data || [];
-  
-      if (states && states.length > 0) {
-        const status = states.map((item, index) => {
-          return {
-            code: item.state
-          };
-        });
-        dispatch(
-          prepareFinalObject(
-            "applyScreenMdmsData.searchScreen.status",
-            status.filter(item => item.code != null)
-          )
-        );
-      }
-  
-      return action;
-    },
+    name: "propertySearch",
+    
     components: {
       div: {
         uiFramework: "custom-atoms",
@@ -126,17 +108,18 @@ import {
               }
             }
           },
-          searchProperty,
-          breakAfterSearch: getBreak(),
-         searchMutationResults,     
-          searchApplications,
-          breakAfterSearch: getBreak(),
-          searchMutationApplicationResults,
+         captureMutationDetails,
+          // searchProperty,
+          // breakAfterSearch: getBreak(),
+          // searchMutationResults,     
+          // searchApplications,
+          // breakAfterSearch: getBreak(),
+          // searchMutationApplicationResults,
 
         }
       }
     }
   };
   
-  export default tradeLicenseSearchAndResult;
+  export default screenConfig;
   
