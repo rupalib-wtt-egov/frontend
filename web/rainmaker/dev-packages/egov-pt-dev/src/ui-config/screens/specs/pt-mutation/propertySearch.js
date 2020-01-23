@@ -3,7 +3,7 @@ import {
     getLabel,
     getBreak
   } from "egov-ui-framework/ui-config/screens/specs/utils";
-  import captureMutationDetails from "./capture-mutation-details";
+  import propertySearchTabs from "./capture-mutation-details";
   import { searchProperty } from "./searchResource/searchProperty";
   import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
   import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
@@ -16,18 +16,50 @@ import {
   import { localStorageGet,getTenantId } from "egov-ui-kit/utils/localStorageUtils";
   import {Tabs} from "egov-ui-kit/components/Tabs";
   import find from "lodash/find";
-  
+  import {searchPropertyTable,searchApplicationTable} from "./searchResource/searchResults";
+  import { httpRequest } from "../../../../ui-utils";
+  import commonConfig from "config/common.js";
+  import YearDialogue from "egov-ui-kit/common/propertyTax/YearDialogue";
+  import { adhocPopup } from "./adhocPopup";
+  import { showHideAdhocPopup} from "../utils";
+
   const hasButton = getQueryArg(window.location.href, "hasButton");
   let enableButton = true;
   enableButton = hasButton && hasButton === "false" ? false : true;
   const tenant= getTenantId();
-  const pageResetAndChange = (state, dispatch) => {
-    dispatch(prepareFinalObject("Licenses", [{ licenseType: "PERMANENT" }]));
-    dispatch(prepareFinalObject("LicensesTemp", []));
-    dispatch(setRoute(`/tradelicence/apply?tenantId=${tenant}`));
-  };
 
-  console.log(captureMutationDetails)
+  //console.log(captureMutationDetails);
+
+  const getMDMSData = async (dispatch) => {
+    const mdmsBody = {
+      MdmsCriteria: {
+        tenantId: commonConfig.tenantId,
+        moduleDetails: [
+          {
+            moduleName: "tenant",
+            masterDetails: [
+              {
+                name: "tenants"
+              }
+            ]
+          }
+        ]
+      }
+    }
+    try {
+      const payload = await httpRequest(
+        "post",
+        "/egov-mdms-service/v1/_search",
+        "_search",
+        [],
+        mdmsBody
+      );
+      console.log("payload--", payload)
+      dispatch(prepareFinalObject("searchScreenMdmsData", payload.MdmsRes));
+    } catch (e) {
+      console.log(e);
+    }
+  };
   
   const header = getCommonHeader({
     labelName: "Property Tax",
@@ -36,6 +68,11 @@ import {
   const screenConfig = {
     uiFramework: "material-ui",
     name: "propertySearch",
+
+    beforeInitScreen: (action, state, dispatch) => {
+      getMDMSData(dispatch);
+    return action;
+  },
     
     components: {
       div: {
@@ -97,7 +134,8 @@ import {
                 onClickDefination: {
                   action: "condition",
                   callBack: (state, dispatch) => {
-                    pageResetAndChange(state, dispatch);
+                    showHideAdhocPopup(state, dispatch, "search");
+                    
                   }
                 },
                 // roleDefination: {
@@ -108,7 +146,10 @@ import {
               }
             }
           },
-         captureMutationDetails,
+          propertySearchTabs,
+         breakAfterSearch: getBreak(),
+         searchPropertyTable,
+         searchApplicationTable
           // searchProperty,
           // breakAfterSearch: getBreak(),
           // searchMutationResults,     
@@ -117,7 +158,20 @@ import {
           // searchMutationApplicationResults,
 
         }
-      }
+      },
+      adhocDialog: {
+          uiFramework: "custom-containers-local",
+          moduleName: "egov-pt",
+          componentPath: "DialogContainer",
+          props: {
+            open: false,
+            maxWidth: "sm",
+            screenKey: "search"
+          },
+          children: {
+            popup: adhocPopup
+          }
+        }
     }
   };
   

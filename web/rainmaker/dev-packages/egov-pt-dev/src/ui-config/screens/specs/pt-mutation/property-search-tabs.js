@@ -1,10 +1,13 @@
 import {
     getCommonGrayCard,
-    getCommonSubHeader
+    getCommonSubHeader,
+    getCommonContainer,
+    getCommonCard
   } from "egov-ui-framework/ui-config/screens/specs/utils";
   import { searchProperty, searchApplication, searchPropertyDetails, searchApplicationDetails } from "./mutation-methods";
+ // import "./index.css"
   
-  const captureMutationDetails = getCommonGrayCard({
+  const propertySearchTabs = getCommonCard({
     // header: getCommonSubHeader(
     //   { labelName: "Capture Payment", labelKey: "NOC_PAYMENT_CAP_PMT" },
     //   {
@@ -14,24 +17,20 @@ import {
     //   }
     // ),
     tabSection: {
-      uiFramework: "custom-containers",
+      uiFramework: "custom-containers-local",
       moduleName: "egov-pt",
       componentPath: "CustomTabContainer",
       props: {
-        // horizontal: {
-        //   tabsGrid: { xs: 4, sm: 2, md: 2 },
-        //   contentGrid: { xs: 8, sm: 10, md: 10 }
-        // },
         tabs: [
           {
             tabButton: {labelName:"Search Property", labelKey:"PT_SEARCH_PROPERTY"},
             tabIcon: "Dashboard",
-            tabContent: { searchProperty }
+            tabContent: { searchPropertyDetails }
           },
           {
             tabButton: {labelName: "Search application", labelKey:"PT_SEARCH_APPLICATION"},
             tabIcon: "Schedule",
-            tabContent: { searchApplication }
+            tabContent: { searchApplicationDetails }
           }
         ]
       },
@@ -39,5 +38,5 @@ import {
     }
   });
   
-  export default captureMutationDetails;
+  export default propertySearchTabs;
   

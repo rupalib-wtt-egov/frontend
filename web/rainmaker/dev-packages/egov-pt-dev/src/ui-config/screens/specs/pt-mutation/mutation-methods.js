@@ -9,24 +9,85 @@ import {
     getCommonParagraph,
     getLabel
   } from "egov-ui-framework/ui-config/screens/specs/utils";
-  //import { searchApiCall } from "./functions";
+  import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+  import { propertySearch,applicationSearch } from "./functions";
   
   import get from "lodash/get";
   import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
   import { toggleSpinner } from "egov-ui-framework/ui-redux/screen-configuration/actions";
   import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 
+  const resetFields = (state, dispatch) => {
+    dispatch(
+      handleField(
+        "propertySearch",
+        "components.div.children.propertySearchTabs.children.cardContent.children.tabSection.props.tabs[0].tabContent.searchPropertyDetails.children.cardContent.children.ulbCityContainer.children.ulbCity",
+        "props.value",
+        ""
+      )
+    );
+    dispatch(
+      handleField(
+        "propertySearch",
+        "components.div.children.propertySearchTabs.children.cardContent.children.tabSection.props.tabs[0].tabContent.searchPropertyDetails.children.cardContent.children.ulbCityContainer.children.ownerMobNo",
+        "props.value",
+        ""
+      )
+    );
+    dispatch(
+      handleField(
+        "propertySearch",
+        "components.div.children.propertySearchTabs.children.cardContent.children.tabSection.props.tabs[0].tabContent.searchPropertyDetails.children.cardContent.children.ulbCityContainer.children.propertyTaxUniqueId",
+        "props.value",
+        ""
+      )
+    );
+    dispatch(
+      handleField(
+        "propertySearch",
+        "components.div.children.propertySearchTabs.children.cardContent.children.tabSection.props.tabs[0].tabContent.searchPropertyDetails.children.cardContent.children.ulbCityContainer.children.existingPropertyId",
+        "props.value",
+        ""
+      )
+    );
+    dispatch(
+      handleField(
+        "propertySearch",
+        "components.div.children.propertySearchTabs.children.cardContent.children.tabSection.props.tabs[1].tabContent.searchApplicationDetails.children.cardContent.children.appNumberContainer.children.propertyTaxApplicationNo",
+        "props.value",
+        ""
+      )
+    );
+    dispatch(
+      handleField(
+        "propertySearch",
+        "components.div.children.propertySearchTabs.children.cardContent.children.tabSection.props.tabs[1].tabContent.searchApplicationDetails.children.cardContent.children.appNumberContainer.children.ownerMobNoProp",
+        "props.value",
+        ""
+      )
+    );
+    dispatch(
+      handleField(
+        "propertySearch",
+        "components.div.children.propertySearchTabs.children.cardContent.children.tabSection.props.tabs[1].tabContent.searchApplicationDetails.children.cardContent.children.appNumberContainer.children.applicationPropertyTaxUniqueId",
+        "props.value",
+        ""
+      )
+    );
+  };
+
   
-  export const searchPropertyDetails = getCommonContainer({
+  export const searchPropertyDetails = getCommonCard({
     subHeader: getCommonTitle({
       labelName: "Search Property",
       labelKey: "SEARCH_PROPERTY"
     }),
+  
     subParagraph: getCommonParagraph({
       labelName: "Provide at least one non-mandatory parameter to search for an application",
       labelKey: "PT_HOME_SEARCH_RESULTS_DESC"
     }),
-    appTradeAndMobNumContainer: getCommonContainer({
+    ulbCityContainer: getCommonContainer({
         ulbCity: getSelectField({
             label: {
               labelName: "ULB",
@@ -37,13 +98,13 @@ import {
               labelKey: "PT_ULB_CITY_PLACEHOLDER"
             },
       
-            localePrefix: {
-              moduleName: "WF",
-              masterName: "FIRENOC"
-            },
+            // localePrefix: {
+            //   moduleName: "WF",
+            //   masterName: "FIRENOC"
+            // },
             jsonPath: "searchScreen.status",
-            sourceJsonPath: "applyScreenMdmsData.searchScreen.status",
-            required: false,
+            sourceJsonPath: "searchScreenMdmsData.tenant.tenants",
+            required: true,
             gridDefination: {
               xs: 12,
               sm: 4
@@ -90,7 +151,7 @@ import {
         },
         required: false,
         pattern: getPattern("MobileNo"),
-        jsonPath: "searchScreen.propMobileNumber",
+        jsonPath: "searchScreen.mobileNumber",
         errorMessage: "ERR_INVALID_MOBILE_NUMBER"
       }),
       propertyTaxUniqueId: getTextField({
@@ -109,8 +170,8 @@ import {
         },
         required: false,
         pattern: /^[a-zA-Z0-9-]*$/i,
-        errorMessage: "ERR_INVALID_APPLICATION_NO",
-        jsonPath: "searchScreen.applicationNumber"
+        errorMessage: "ERR_INVALID_PROPERTY_ID",
+        jsonPath: "searchScreen.ids"
       }),
       existingPropertyId: getTextField({
         label: {
@@ -129,7 +190,7 @@ import {
         required: false,
         pattern: /^[a-zA-Z0-9-]*$/i,
         errorMessage: "ERR_INVALID_APPLICATION_NO",
-        jsonPath: "searchScreen.applicationNumber"
+        jsonPath: "searchScreen.oldpropertyids"
       })
     }),
     button: getCommonContainer({
@@ -158,10 +219,10 @@ import {
                 labelKey: "PT_HOME_RESET_BUTTON"
               })
             },
-            // onClickDefination: {
-            //   action: "condition",
-            //   callBack: resetFields
-            // }
+            onClickDefination: {
+              action: "condition",
+              callBack: resetFields
+            }
           },
           searchButton: {
             componentPath: "Button",
@@ -187,26 +248,27 @@ import {
                 labelKey: "PT_HOME_SEARCH_RESULTS_BUTTON_SEARCH"
               })
             },
-            // onClickDefination: {
-            //   action: "condition",
-            //   callBack: searchApiCall
-            // }
+            onClickDefination: {
+              action: "condition",
+              callBack: propertySearch
+            }
           }
         })
       })
   });
   
   
-  export const searchApplicationDetails = getCommonContainer({
+  export const searchApplicationDetails = getCommonCard({
     subHeader: getCommonTitle({
       labelName: "Search Application",
       labelKey: "SEARCH_APPLICATION"
     }),
+    
     subParagraph: getCommonParagraph({
       labelName: "Provide at least one non-mandatory parameter to search for an application",
       labelKey: "PT_HOME_SEARCH_RESULTS_DESC"
     }),
-    appTradeAndMobNumContainer: getCommonContainer({
+    appNumberContainer: getCommonContainer({
         propertyTaxApplicationNo: getTextField({
             label: {
               labelName: "Application No",
@@ -224,9 +286,9 @@ import {
             required: false,
             pattern: /^[a-zA-Z0-9-]*$/i,
             errorMessage: "ERR_INVALID_APPLICATION_NO",
-            jsonPath: "searchScreen.applicationNumber"
+            jsonPath: "searchScreen.ptApplicationNumber"
           }), 
-      ownerMobNo: getTextField({
+      ownerMobNoProp: getTextField({
         label: {
           labelName: "Owner Mobile No.",
           labelKey: "PT_HOME_SEARCH_APP_OWN_MOB_LABEL"
@@ -247,10 +309,10 @@ import {
         },
         required: false,
         pattern: getPattern("MobileNo"),
-        jsonPath: "searchScreen.appMobileNumber",
+        jsonPath: "searchScreen.mobileNumber",
         errorMessage: "ERR_INVALID_MOBILE_NUMBER"
       }),
-      propertyTaxUniqueId: getTextField({
+      applicationPropertyTaxUniqueId: getTextField({
         label: {
           labelName: "Property Tax Unique Id",
           labelKey: "PT_PROPERTY_UNIQUE_ID"
@@ -267,7 +329,7 @@ import {
         required: false,
         pattern: /^[a-zA-Z0-9-]*$/i,
         errorMessage: "ERR_INVALID_APPLICATION_NO",
-        jsonPath: "searchScreen.applicationNumber"
+        jsonPath: "searchScreen.ids"
       }),
     }),
     button: getCommonContainer({
@@ -296,10 +358,10 @@ import {
                 labelKey: "PT_HOME_RESET_BUTTON"
               })
             },
-            // onClickDefination: {
-            //   action: "condition",
-            //   callBack: resetFields
-            // }
+            onClickDefination: {
+              action: "condition",
+              callBack: resetFields
+            }
           },
           searchButton: {
             componentPath: "Button",
@@ -325,10 +387,10 @@ import {
                 labelKey: "PT_HOME_SEARCH_RESULTS_BUTTON_SEARCH"
               })
             },
-            // onClickDefination: {
-            //   action: "condition",
-            //   callBack: searchApiCall
-            // }
+            onClickDefination: {
+              action: "condition",
+              callBack: applicationSearch
+            }
           }
         })
       })

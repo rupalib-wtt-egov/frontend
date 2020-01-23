@@ -16,6 +16,7 @@ class MultiItem extends React.Component {
 
 
   onTabClick = tabIndex => {
+    alert("PropertySearchContainer")
     const { state, dispatch } = this.props;
     this.setState({ tabIndex });
   };
