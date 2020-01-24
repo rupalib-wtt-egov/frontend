@@ -99,7 +99,7 @@ export const applicationSearch= async (state,dispatch)=>{
       );
     }
   
-  else if (
+   if (
     Object.keys(searchScreenObject).length == 0 || Object.keys(searchScreenObject).length == 1 ||
     (Object.values(searchScreenObject).every(x => x === ""))
   ) {
