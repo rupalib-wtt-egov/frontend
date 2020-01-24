@@ -297,7 +297,20 @@ class Property extends Component {
             totalBillAmountDue={totalBillAmountDue}
           />
         }
-        <div
+       {process.env.REACT_APP_NAME !== "Citizen"&& <div >
+          <div  className="col-md-9">
+            
+          </div>
+       <div className="col-md-3" style={{float:"right" ,marginBottom:"30px"}}>
+       <Button
+              onClick={() => this.onAssessPayClick()}
+              label={<Label buttonLabel={true} label="PT_ASSESS_PROPERTY" fontSize="16px" />}
+              primary={true}
+              style={{ lineHeight: "auto", minWidth: "inherit" }}
+            />
+       </div>
+        </div>}
+        {process.env.REACT_APP_NAME === "Citizen"&& <div
           id="tax-wizard-buttons"
           className="wizard-footer col-sm-12"
           style={{ textAlign: "right" }}
@@ -310,7 +323,7 @@ class Property extends Component {
               style={{ lineHeight: "auto", minWidth: "inherit" }}
             />
           </div>
-        </div>
+        </div>}
         {dialogueOpen && <YearDialogue open={dialogueOpen} history={history} urlToAppend={urlToAppend} closeDialogue={closeYearRangeDialogue} />}
       </Screen>
     );

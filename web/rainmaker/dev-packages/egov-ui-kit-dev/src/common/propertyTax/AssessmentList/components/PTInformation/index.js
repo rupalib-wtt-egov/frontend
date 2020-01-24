@@ -2,7 +2,7 @@ import React from "react";
 import { List, Card } from "components";
 import Label from "egov-ui-kit/utils/translationNode";
 import "./index.css";
-
+import WorkFlowContainer from "egov-workflow/ui-containers-local/WorkFlowContainer";
 import AssessmentInfo from '../../../Property/components/AssessmentInfo';
 import PropertyAddressInfo from '../../../Property/components/PropertyAddressInfo';
 import OwnerInfo from '../../../Property/components/OwnerInfo';
@@ -25,6 +25,9 @@ const PTInformation = ({ items, label, onItemClick, innerDivStyle, hoverColor, p
                 />
             )}
             <div>
+            <WorkFlowContainer  dataPath={"FireNOCs"}
+            moduleName={"FIRENOC"} 
+            updateUrl={"/firenoc-services/v1/_update"}></WorkFlowContainer>
                 <Card
                     textChildren={
                         <div className="col-sm-12 col-xs-12" style={{ alignItems: "center" }}>
