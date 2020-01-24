@@ -11,9 +11,10 @@ import EditIcon from "./components/EditIcon";
 import PropertyAddressInfo from 'egov-ui-kit/common/propertyTax/Property/components/PropertyAddressInfo';
 import AssessmentInfo from 'egov-ui-kit/common/propertyTax/Property/components/AssessmentInfo';
 import OwnerInfo from 'egov-ui-kit/common/propertyTax/Property/components/OwnerInfo';
-
-
+import WorkFlowContainer from "egov-workflow/ui-containers-local/WorkFlowContainer";
+// dev-packages\pt-employee-dev\node_modules\egov-ui-framework\ui-redux\workflow\actions.js
 import "./index.css";
+import WorkflowComponent from "../WorkflowComponent";
 const defaultIconStyle = {
   fill: "#767676",
   width: 18,
@@ -75,9 +76,15 @@ class ReviewForm extends Component {
     const { generalMDMSDataById = {} } = this.props;
     return (
       <div>
+        {/* <WorkflowComponent></WorkflowComponent> */}
+        <WorkFlowContainer dataPath={"FireNOCs"}
+                    moduleName={"FIRENOC"}
+                    updateUrl={"/firenoc-services/v1/_update"}></WorkFlowContainer>
+            
         <Card
           textChildren={
             <div className="col-sm-12 col-xs-12" style={{ alignItems: "center" }}>
+               
               <PropertyTaxDetailsCard
                 estimationDetails={estimationDetails}
                 importantDates={importantDates}

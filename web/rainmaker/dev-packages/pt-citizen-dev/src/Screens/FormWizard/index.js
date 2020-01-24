@@ -329,7 +329,7 @@ class FormWizard extends Component {
     } = this.props;
     toggleSpinner();
     try {
-
+      
       let { search } = this.props.location;
       const assessmentId =
         getQueryValue(search, "assessmentId") ||
@@ -340,6 +340,12 @@ class FormWizard extends Component {
       const tenantId = getQueryValue(search, "tenantId");
       const propertyId = getQueryValue(search, "propertyId");
       const draftUuid = getQueryValue(search, "uuid");
+      
+      const queryObject = [
+        { key: "tenantId", value: tenantId },
+        { key: "businessService", value: "FIRENOC" }
+      ];
+      this.setBusinessServiceDataToLocalStorage(queryObject);
       const documentTypeMdms = await getDocumentTypes();
       if (!!documentTypeMdms) fetchMDMDDocumentTypeSuccess(documentTypeMdms);
 
@@ -1641,6 +1647,24 @@ class FormWizard extends Component {
       });
     }
   }
+  setBusinessServiceDataToLocalStorage = async (queryObject) => {
+    const { toggleSnackbarAndSetText } = this.props;
+    try {
+      const payload = await httpRequest("egov-workflow-v2/egov-wf/businessservice/_search", "_search", queryObject);
+      localStorageSet("businessServiceData", JSON.stringify(get(payload, "BusinessServices")));
+      return get(payload, "BusinessServices");
+    } catch (e) {
+      toggleSnackbarAndSetText(
+        true,
+        {
+          labelName: "Not authorized to access Business Service!",
+          labelKey: "ERR_NOT_AUTHORISED_BUSINESS_SERVICE",
+        },
+        "error"
+      );
+    }
+  };
+
   convertImgToDataURLviaCanvas = (url, callback, outputFormat) => {
     var img = new Image();
     img.crossOrigin = "Anonymous";

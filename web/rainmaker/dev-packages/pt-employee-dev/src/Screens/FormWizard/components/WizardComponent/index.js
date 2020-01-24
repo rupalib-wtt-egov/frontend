@@ -58,7 +58,7 @@ const WizardComponent = ({
       {selected < 3 && <div>{header}</div>}
       <div className="wizard-content clearfix">{content}</div>
       {footer}
-      <div id="tax-wizard-buttons" className="wizard-footer col-sm-10" style={{ textAlign: "right" }}>
+      {selected != 3&& <div id="tax-wizard-buttons" className="wizard-footer col-sm-10" style={{ textAlign: "right" }}>
         <div className="button-container col-xs-10" style={{ float: "right" }}>
 
           {selected != 3 && selected != 5 && selected != 4 && <Button
@@ -102,7 +102,7 @@ const WizardComponent = ({
             disabled={!nextButtonEnabled}
           />
         </div>
-      </div>
+      </div>}
       {/*<Declaration open={dialogueOpen} closeDialogue={closeDialogue} selected={selected} updateIndex={updateIndex}/>*/}
     </div>
   );

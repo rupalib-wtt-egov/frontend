@@ -17,7 +17,7 @@ import "./index.css";
 import PropertyAddressInfo from 'egov-ui-kit/common/propertyTax/Property/components/PropertyAddressInfo';
 import AssessmentInfo from 'egov-ui-kit/common/propertyTax/Property/components/AssessmentInfo';
 import OwnerInfo from 'egov-ui-kit/common/propertyTax/Property/components/OwnerInfo';
-
+import WorkFlowContainer from "egov-workflow/ui-containers-local/WorkFlowContainer";
 
 const defaultIconStyle = {
   fill: "#767676",
@@ -221,6 +221,9 @@ class ReviewForm extends Component {
     const { generalMDMSDataById = {} } = this.props;
     return (
       <div>
+          <WorkFlowContainer  dataPath={"FireNOCs"}
+            moduleName={"FIRENOC"} 
+            updateUrl={"/firenoc-services/v1/_update"}></WorkFlowContainer>
         <Card
           textChildren={
             <div className="col-sm-12 col-xs-12" style={{ alignItems: "center" }}>
@@ -233,6 +236,7 @@ class ReviewForm extends Component {
               <PropertyAddressInfo generalMDMSDataById={generalMDMSDataById} properties={this.props.properties} editIcon={<EditIcon onIconClick={() => onEditButtonClick(0)} />}></PropertyAddressInfo>
               <AssessmentInfo generalMDMSDataById={generalMDMSDataById} properties={this.props.properties} editIcon={<EditIcon onIconClick={() => onEditButtonClick(1)} />}></AssessmentInfo>
               <OwnerInfo generalMDMSDataById={generalMDMSDataById} properties={this.props.properties} editIcon={<EditIcon onIconClick={() => onEditButtonClick(2)} />}></OwnerInfo>
+            
               {/* {isAssesment && */}
               <div>
 
