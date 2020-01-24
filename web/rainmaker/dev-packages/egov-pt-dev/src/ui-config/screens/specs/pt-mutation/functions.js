@@ -30,6 +30,7 @@ export const applicationSearch= async (state,dispatch)=>{
     "searchScreen",
     {}
   );
+
   const isSearchBoxFirstRowValid = validateFields(
     "components.div.children.captureMutationDetails.children.cardContent.children.tabSection.props.tabs[0].tabContent.searchProperty.children.searchPropertyDetails.children.ulbCityContainer.children",
     state,
@@ -37,12 +38,41 @@ export const applicationSearch= async (state,dispatch)=>{
     "propertySearch"
   );
 
-//   const isSearchBoxSecondRowValid = validateFields(
-//     "components.div.children.NOCApplication.children.cardContent.children.appStatusAndToFromDateContainer.children",
-//     state,
-//     dispatch,
-//     "search"
-//   );
+  const isownerCityRowValid= validateFields(
+    "components.div.children.propertySearchTabs.children.cardContent.children.tabSection.props.tabs[0].tabContent.searchPropertyDetails.children.cardContent.children.ulbCityContainer.children.ulbCity",
+    state,
+    dispatch,
+    "propertySearch"
+  );
+
+
+  const isownerMobNoRowValid= validateFields(
+    "components.div.children.propertySearchTabs.children.cardContent.children.tabSection.props.tabs[0].tabContent.searchPropertyDetails.children.cardContent.children.ulbCityContainer.children.ownerMobNo",
+    state,
+    dispatch,
+    "propertySearch"
+  );
+
+  const ispropertyTaxUniqueIdRowValid= validateFields(
+    "components.div.children.propertySearchTabs.children.cardContent.children.tabSection.props.tabs[0].tabContent.searchPropertyDetails.children.cardContent.children.ulbCityContainer.children.propertyTaxUniqueId",
+    state,
+    dispatch,
+    "propertySearch"
+  );
+
+  const isexistingPropertyIdRowValid= validateFields(
+    "components.div.children.propertySearchTabs.children.cardContent.children.tabSection.props.tabs[0].tabContent.searchPropertyDetails.children.cardContent.children.ulbCityContainer.children.existingPropertyId",
+    state,
+    dispatch,
+    "propertySearch"
+  );
+
+  const ispropertyTaxApplicationNoRowValid= validateFields(
+    "components.div.children.propertySearchTabs.children.cardContent.children.tabSection.props.tabs[1].tabContent.searchApplicationDetails.children.cardContent.children.appNumberContainer.children.propertyTaxApplicationNo",
+    state,
+    dispatch,
+    "propertySearch"
+  );
 
   if (!(isSearchBoxFirstRowValid)) {
     dispatch(
@@ -55,18 +85,32 @@ export const applicationSearch= async (state,dispatch)=>{
         "error"
       )
     );
-  } else if (
-    Object.keys(searchScreenObject).length == 0 ||
-    Object.values(searchScreenObject).every(x => x === "")
+  } 
+  if (isSearchBoxFirstRowValid  && isownerCityRowValid && !(ispropertyTaxUniqueIdRowValid || isexistingPropertyIdRowValid || isexistingPropertyIdRowValid || ispropertyTaxApplicationNoRowValid)){
+      dispatch(
+        toggleSnackbar(
+          true,
+          {
+            labelName: "Please fill at least one field along with city",
+            labelKey: "PT_SEARCH_SELECT_AT_LEAST_ONE_TOAST_MESSAGE_OTHER_THAN_CITY"
+          },
+          "error"
+        )
+      );
+    }
+  
+  else if (
+    Object.keys(searchScreenObject).length == 0 || Object.keys(searchScreenObject).length == 1 ||
+    (Object.values(searchScreenObject).every(x => x === ""))
   ) {
     dispatch(
       toggleSnackbar(
         true,
         {
-          labelName: "Please fill at least one field to start search",
-          labelKey: "NOC_SEARCH_SELECT_AT_LEAST_ONE_TOAST_MESSAGE"
+          labelName: "Please fill at least one field along with city",
+          labelKey: "PT_SEARCH_SELECT_AT_LEAST_ONE_TOAST_MESSAGE_OTHER_THAN_CITY"
         },
-        "warning"
+        "error"
       )
     );
   } 
@@ -132,11 +176,13 @@ export const applicationSearch= async (state,dispatch)=>{
       }));
 
       let applicationData = response.Properties.map(item => ({
-        [getTextToLocalMapping("Application No")]:
-          item.applicationNo || "-",
+        // [getTextToLocalMapping("Application No")]:
+        //   item.applicationNo || "-",
+          [getTextToLocalMapping("Application No")]:
+          item.propertyId || "-",
         [getTextToLocalMapping("Property Tax Unique Id")]: item.propertyId || "-",
         [getTextToLocalMapping("Application Type")]:
-          item.applicationNo || "NA",
+          item.applicationNo || "PT",
         [getTextToLocalMapping("Owner Name")]:  
         item.propertyDetails[0].owners[0].name || "-",
         [getTextToLocalMapping("Address")]:

@@ -56,6 +56,12 @@ import {
       );
       console.log("payload--", payload)
       dispatch(prepareFinalObject("searchScreenMdmsData", payload.MdmsRes));
+      dispatch(
+        prepareFinalObject(
+          "searchScreen.status",
+          tenant
+        )
+      );
     } catch (e) {
       console.log(e);
     }

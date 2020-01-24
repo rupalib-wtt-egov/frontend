@@ -24,12 +24,10 @@ import {
         tabs: [
           {
             tabButton: {labelName:"Search Property", labelKey:"PT_SEARCH_PROPERTY"},
-            tabIcon: "Dashboard",
             tabContent: { searchPropertyDetails }
           },
           {
             tabButton: {labelName: "Search application", labelKey:"PT_SEARCH_APPLICATION"},
-            tabIcon: "Schedule",
             tabContent: { searchApplicationDetails }
           }
         ]

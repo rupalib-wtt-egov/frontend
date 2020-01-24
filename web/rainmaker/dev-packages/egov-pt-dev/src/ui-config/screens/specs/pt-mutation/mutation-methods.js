@@ -11,21 +11,25 @@ import {
   } from "egov-ui-framework/ui-config/screens/specs/utils";
   import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
   import { propertySearch,applicationSearch } from "./functions";
-  
+  import { httpRequest } from "../../../../ui-utils/api";
+  import {
+    fetchFromLocalStorage,
+    addQueryArg
+  } from "egov-ui-framework/ui-utils/commons";
   import get from "lodash/get";
   import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
   import { toggleSpinner } from "egov-ui-framework/ui-redux/screen-configuration/actions";
   import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 
   const resetFields = (state, dispatch) => {
-    dispatch(
-      handleField(
-        "propertySearch",
-        "components.div.children.propertySearchTabs.children.cardContent.children.tabSection.props.tabs[0].tabContent.searchPropertyDetails.children.cardContent.children.ulbCityContainer.children.ulbCity",
-        "props.value",
-        ""
-      )
-    );
+    // dispatch(
+    //   handleField(
+    //     "propertySearch",
+    //     "components.div.children.propertySearchTabs.children.cardContent.children.tabSection.props.tabs[0].tabContent.searchPropertyDetails.children.cardContent.children.ulbCityContainer.children.ulbCity",
+    //     "props.value",
+    //     ""
+    //   )
+    // );
     dispatch(
       handleField(
         "propertySearch",
@@ -98,37 +102,21 @@ import {
               labelKey: "PT_ULB_CITY_PLACEHOLDER"
             },
       
-            // localePrefix: {
-            //   moduleName: "WF",
-            //   masterName: "FIRENOC"
-            // },
+            localePrefix: {
+              moduleName: "TENANT",
+              masterName: "TENANTS"
+            },
             jsonPath: "searchScreen.status",
             sourceJsonPath: "searchScreenMdmsData.tenant.tenants",
             required: true,
+            props:{
+              required: true,
+            disabled: true
+            },
             gridDefination: {
               xs: 12,
               sm: 4
             }
-            // data: [
-            //   {
-            //     code: "INITIATED"
-            //   },
-            //   {
-            //     code: "APPLIED"
-            //   },
-            //   {
-            //     code: "PAID"
-            //   },
-            //   {
-            //     code: "APPROVED"
-            //   },
-            //   {
-            //     code: "REJECTED"
-            //   },
-            //   {
-            //     code: "CANCELLED"
-            //   }
-            // ]
           }),
       ownerMobNo: getTextField({
         label: {
@@ -189,7 +177,7 @@ import {
         },
         required: false,
         pattern: /^[a-zA-Z0-9-]*$/i,
-        errorMessage: "ERR_INVALID_APPLICATION_NO",
+        errorMessage: "ERR_INVALID_PROPERTY_ID",
         jsonPath: "searchScreen.oldpropertyids"
       })
     }),
@@ -328,7 +316,7 @@ import {
         },
         required: false,
         pattern: /^[a-zA-Z0-9-]*$/i,
-        errorMessage: "ERR_INVALID_APPLICATION_NO",
+        errorMessage: "ERR_INVALID_PROPERTY_ID",
         jsonPath: "searchScreen.ids"
       }),
     }),

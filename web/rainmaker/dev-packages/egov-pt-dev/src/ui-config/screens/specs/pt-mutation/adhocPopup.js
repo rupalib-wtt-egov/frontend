@@ -12,6 +12,7 @@ import {
   import cloneDeep from "lodash/cloneDeep";
   import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
   import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+  import "./index.css";
  // import { createEstimateData } from "../../utils";
   import {
     prepareFinalObject,
@@ -21,14 +22,14 @@ import {
   
   const resetFields = (state, dispatch) => {
     showHideAdhocPopup(state,dispatch,"search");
-    dispatch(
-      handleField(
-        "propertySearch",
-        "components.div.children.propertySearchTabs.children.cardContent.children.tabSection.props.tabs[0].tabContent.searchPropertyDetails.children.cardContent.children.ulbCityContainer.children.ulbCity",
-        "props.value",
-        ""
-      )
-    );
+    // dispatch(
+    //   handleField(
+    //     "propertySearch",
+    //     "components.div.children.propertySearchTabs.children.cardContent.children.tabSection.props.tabs[0].tabContent.searchPropertyDetails.children.cardContent.children.ulbCityContainer.children.ulbCity",
+    //     "props.value",
+    //     ""
+    //   )
+    // );
     dispatch(
       handleField(
         "propertySearch",
@@ -97,13 +98,14 @@ import {
         uiFramework: "custom-containers",
         componentPath: "RadioGroupContainer",
         gridDefination: {
-          xs: 2
+          xs: 12,
+          sm: 12
         },
         jsonPath: "ReceiptTemp[0].financialYear",
         type: "array",
         props: {
           required: true,
-          label: { name: "Select Financial Year", key: "SELECT_FINANCIAL_YEAR" },
+          label: { name: "Select Financial Year", key: "SELECT_FINANCIAL_YEAR"}, 
           buttons: [
             {
               labelName: "2019-20",
@@ -149,14 +151,15 @@ import {
               // align: "center"
             },
             props: {
-              variant: "outlined",
+              variant: "text",
               style: {
                 color: "#FE7A51",
-                borderColor: "#FE7A51",
-                width: "220px",
-                height: "48px",
-                margin: "8px",
-                float: "right"
+                border: "1px solid rgb(255, 255, 255)",
+              //  borderColor: "#FE7A51",
+              //  width: "50px",
+              //  height: "48px",
+              //  margin: "8px",
+              //  float: "right"
               }
             },
             children: {
@@ -178,14 +181,17 @@ import {
               // align: "center"
             },
             props: {
-              variant: "contained",
+              variant: "text",
               style: {
-                color: "white",
-                margin: "8px",
-                backgroundColor: "rgba(0, 0, 0, 0.6000000238418579)",
-                borderRadius: "2px",
-                width: "220px",
-                height: "48px"
+                // color: "white",
+               // margin: "8px",
+               border: "1px solid rgb(255, 255, 255)",
+                backgroundColor: "#FFF",
+                color: "#FE7A51",
+               // borderRadius: "2px",
+               // width: "50px",
+               // height: "48px"
+               //float:"right"
               }
             },
             children: {

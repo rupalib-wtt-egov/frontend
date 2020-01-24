@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import get from "lodash/get";
+import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import {
   sortByEpoch,
   getEpochForDate,
@@ -157,8 +158,8 @@ export const searchPropertyTable = {
       selectableRows: false,
       hover: true,
       rowsPerPageOptions: [10, 15, 20],
-      onRowClick: (row, index) => {
-        onRowClick(row);
+      onRowClick: (row, index,dispatch) => {
+        onPropertyTabClick(row,dispatch);
       }
     },
     customSortColumn: {
@@ -222,8 +223,8 @@ export const searchApplicationTable = {
       selectableRows: false,
       hover: true,
       rowsPerPageOptions: [10, 15, 20],
-      onRowClick: (row, index) => {
-        onRowClick(row);
+      onRowClick: (row, index,dispatch) => {
+        onApplicationTabClick(row,dispatch);
       }
     },
     customSortColumn: {
@@ -246,7 +247,7 @@ export const searchApplicationTable = {
 
 
 
-const onRowClick = rowData => {
+const onPropertyTabClick = (rowData,dispatch) => {
   switch (rowData[5]) {
     case "INITIATED":
       window.location.href = `apply?applicationNumber=${rowData[0]}&tenantId=${
@@ -254,9 +255,28 @@ const onRowClick = rowData => {
       }`;
       break;
     default:
-      window.location.href = `search-preview?applicationNumber=${
-        rowData[0]
-      }&tenantId=${rowData[6]}`;
+     // window.location.href = `search-preview?applicationNumber=${
+      window.location.pathname=`property-tax/property/${rowData[0]}/${rowData[6]}`;
+      //dispatch(setRoute(`/property-tax/property/${rowData[0]}/${rowData[6]}`));
+    //   rowData[0]
+    // }&tenantId=${rowData[6]}`; 
+      break;
+  }
+};
+
+const onApplicationTabClick = (rowData,dispatch) => {
+  switch (rowData[5]) {
+    case "INITIATED":
+      window.location.href = `apply?applicationNumber=${rowData[0]}&tenantId=${
+        rowData[6]
+      }`;
+      break;
+    default:
+     // window.location.href = `search-preview?applicationNumber=${
+      window.location.pathname=`property-tax/property/${rowData[1]}/${rowData[6]}`;
+      //dispatch(setRoute(`/property-tax/property/${rowData[0]}/${rowData[6]}`));
+    //   rowData[0]
+    // }&tenantId=${rowData[6]}`; 
       break;
   }
 };
