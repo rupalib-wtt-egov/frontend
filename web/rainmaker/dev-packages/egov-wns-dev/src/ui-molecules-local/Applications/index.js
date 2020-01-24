@@ -4,6 +4,7 @@ import Label from "../../ui-containers-local/LabelContainer";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Grid from "@material-ui/core/Grid";
+import { Link } from "react-router-dom";
 import { LabelContainer } from "egov-ui-framework/ui-containers";
 import { connect } from "react-redux";
 import get from "lodash/get";
@@ -17,10 +18,10 @@ const styles = {
   }
 };
 
-class MyConnections extends React.Component {
-  getConnectionDetails = data => {
-    window.location.href = `/citizen/wns/connection-details?connectionNumber=${data.connectionNo}&tenantId=${data.property.tenantId}&service=${data.service.toUpperCase()}&connectionType=${data.connectionType}`
-  }
+class Applications extends React.Component {
+//   getConnectionDetails = data => {
+//     window.location.href = `/citizen/wns/connection-details?connectionNumber=${data.connectionNo}&tenantId=${data.property.tenantId}&service=${data.service.toUpperCase()}&connectionType=${data.connectionType}`
+//   }
 
   getViewBillDetails = data => {
     window.location.href = `/citizen/wns/viewBill?connectionNumber=${data.connectionNo}&tenantId=${data.property.tenantId}&service=${data.service.toUpperCase()}&connectionType=${data.connectionType}`
@@ -53,7 +54,7 @@ class MyConnections extends React.Component {
                           />
                         </Grid>
                       </Grid>
-                      {/* <Grid container style={{ marginBottom: 12 }}>
+                      <Grid container style={{ marginBottom: 12 }}>
                         <Grid item md={4} xs={6}>
                           <LabelContainer
                             labelKey="WS_MYCONNECTIONS_APPLICATION_NO"
@@ -68,8 +69,8 @@ class MyConnections extends React.Component {
                             style={{ fontSize: 14, color: "rgba(0, 0, 0, 0.87" }}
                           />
                         </Grid>
-                      </Grid> */}
-                      <Grid container style={{ marginBottom: 12 }}>
+                      </Grid>
+                      {/* <Grid container style={{ marginBottom: 12 }}>
                         <Grid item md={4} xs={6}>
                           <LabelContainer
                             labelKey="WS_MYCONNECTIONS_CONSUMER_NO"
@@ -87,23 +88,7 @@ class MyConnections extends React.Component {
                             </a>
                           </div>
                         </Grid>
-                      </Grid>
-                      <Grid container style={{ marginBottom: 12 }}>
-                        <Grid item md={4} xs={6}>
-                          <LabelContainer
-                            labelKey="WS_MYCONNECTIONS_STATUS"
-                            fontSize={14}
-                            style={{ fontSize: 14, color: "rgba(0, 0, 0, 0.60" }}
-                          />
-                        </Grid>
-                        <Grid item md={8} xs={6}>
-                          <Label
-                            labelName={item.status}
-                            fontSize={14}
-                            style={{ fontSize: 14, color: "rgba(0, 0, 0, 0.87" }}
-                          />
-                        </Grid>
-                      </Grid>
+                      </Grid> */}
                       <Grid container style={{ marginBottom: 12 }}>
                         <Grid item md={4} xs={6}>
                           <LabelContainer
@@ -115,22 +100,6 @@ class MyConnections extends React.Component {
                         <Grid item md={8} xs={6}>
                           <LabelContainer
                             labelName={item.property.owners.map(owner => owner.name)}
-                            fontSize={14}
-                            style={{ fontSize: 14, color: "rgba(0, 0, 0, 0.87" }}
-                          />
-                        </Grid>
-                      </Grid>
-                      <Grid container style={{ marginBottom: 12 }}>
-                        <Grid item md={4} xs={6}>
-                          <LabelContainer
-                            labelKey="WS_MYCONNECTION_ADDRESS"
-                            fontSize={14}
-                            style={{ fontSize: 14, color: "rgba(0, 0, 0, 0.60" }}
-                          />
-                        </Grid>
-                        <Grid item md={8} xs={6}>
-                          <Label
-                            labelName={item.property.address.street}
                             fontSize={14}
                             style={{ fontSize: 14, color: "rgba(0, 0, 0, 0.87" }}
                           />
@@ -152,8 +121,49 @@ class MyConnections extends React.Component {
                           />
                         </Grid>
                       </Grid>
-                      <div>
-                        {item.due === "NA" ?
+                      <Grid container style={{ marginBottom: 12 }}>
+                        <Grid item md={4} xs={6}>
+                          <LabelContainer
+                            labelKey="WS_MYCONNECTIONS_STATUS"
+                            fontSize={14}
+                            style={{ fontSize: 14, color: "rgba(0, 0, 0, 0.60" }}
+                          />
+                        </Grid>
+                        <Grid item md={8} xs={6}>
+                          <Label
+                            labelName={item.status}
+                            fontSize={14}
+                            style={{ fontSize: 14, color: "rgba(0, 0, 0, 0.87" }}
+                          />
+                        </Grid>
+                      </Grid>
+                      {/* <Grid container style={{ marginBottom: 12 }}>
+                        <Grid item md={4} xs={6}>
+                          <LabelContainer
+                            labelKey="WS_MYCONNECTION_ADDRESS"
+                            fontSize={14}
+                            style={{ fontSize: 14, color: "rgba(0, 0, 0, 0.60" }}
+                          />
+                        </Grid>
+                        <Grid item md={8} xs={6}>
+                          <Label
+                            labelName={item.property.address.street}
+                            fontSize={14}
+                            style={{ fontSize: 14, color: "rgba(0, 0, 0, 0.87" }}
+                          />
+                        </Grid>
+                      </Grid> */}
+                     
+                      <div className="linkStyle" onClick={() => this.getViewBillDetails(item)}>
+                      <LabelContainer 
+                                labelKey="WS_VIEW_DETAILS"
+                                style={{
+                                  color: "#fe7a51",
+                                  fontSize: 14,
+                                }}
+                              />
+                          
+                        {/* {item.due === "-" ?
                           (<div></div>)
                           : item.due === 0 ?
                             (<div> <LabelContainer
@@ -162,14 +172,15 @@ class MyConnections extends React.Component {
                             /></div>) :
                             (<div className="linkStyle" onClick={() => this.getViewBillDetails(item)}>
                               <LabelContainer
-                                labelKey="CS_COMMON_PAY"
+                              labelName="VIEW DETAILS"
+                                // labelKey="CS_COMMON_PAY"
                                 style={{
                                   color: "#fe7a51",
                                   fontSize: 14,
                                 }}
                               />
                             </div>)
-                        }
+                        } */}
                       </div>
                     </div>
                   </CardContent>
@@ -224,5 +235,5 @@ export default withStyles(styles)(
   connect(
     mapStateToProps,
     mapDispatchToProps
-  )(MyConnections)
+  )(Applications)
 );
