@@ -4,15 +4,11 @@ import {
     getBreak
   } from "egov-ui-framework/ui-config/screens/specs/utils";
   import propertySearchTabs from "./capture-mutation-details";
-  import { searchProperty } from "./searchResource/searchProperty";
   import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
   import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
   import { pendingMutationApprovals } from "./searchResource/pendingMutationApprovals";
   import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
   // import { progressStatus } from "./searchResource/progressStatus";
-  import { searchMutationResults } from "./searchResource/searchMutationResults";
-  import {searchApplications} from "./searchResource/searchApplications";
-  import {searchMutationApplicationResults} from "./searchResource/searchMutationApplications"
   import { localStorageGet,getTenantId } from "egov-ui-kit/utils/localStorageUtils";
   import {Tabs} from "egov-ui-kit/components/Tabs";
   import find from "lodash/find";
@@ -156,12 +152,6 @@ import {
          breakAfterSearch: getBreak(),
          searchPropertyTable,
          searchApplicationTable
-          // searchProperty,
-          // breakAfterSearch: getBreak(),
-          // searchMutationResults,     
-          // searchApplications,
-          // breakAfterSearch: getBreak(),
-          // searchMutationApplicationResults,
 
         }
       },
