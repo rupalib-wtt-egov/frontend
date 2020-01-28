@@ -2765,6 +2765,13 @@ export const getBpaDetailsForOwner = async (state, dispatch, fieldInfo) => {
             "BPA.owners",
             []
           );
+          let ownershipCategory = get(
+            state.screenConfiguration.preparedFinalObject,
+            "BPA.ownershipCategory"
+          );
+          if(ownershipCategory && ownershipCategory == "INDIVIDUAL.SINGLEOWNER") {
+            userInfo.isPrimaryOwner = true;
+          }
           
           currOwnersArr[cardIndex] = userInfo;
           dispatch(prepareFinalObject(`BPA.owners`, currOwnersArr));
@@ -2877,10 +2884,10 @@ export const calculationType = (state, dispatch) => {
 export const residentialType = (state, dispatch) => {
   let resType = get(
     state.screenConfiguration.preparedFinalObject,
-    "scrutinyDetails.planDetail.virtualBuilding.occupancyTypes[0].type.name"
+    "applyScreenMdmsData.BPA.OccupancyType[0].code"
   );
   if(resType) {
-    dispatch(prepareFinalObject("BPA.occupancyType", (resType).toUpperCase()));
+    dispatch(prepareFinalObject("BPA.occupancyType", resType));
   }
 }
 
