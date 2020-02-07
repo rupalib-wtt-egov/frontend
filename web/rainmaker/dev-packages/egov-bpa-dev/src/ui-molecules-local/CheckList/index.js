@@ -195,7 +195,7 @@ class CheckList extends Component {
         }
       });
     }
-
+   console.log(documnts, "shaikrabbani");
     prepareFinalObject("checkListUploaRedux", {});
     let requiredDocuments = [];
     if (documnts && documnts.length > 0) {

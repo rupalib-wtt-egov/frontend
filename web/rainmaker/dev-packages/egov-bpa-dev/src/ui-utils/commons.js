@@ -135,33 +135,7 @@ export const getAppSearchResults = async (queryObject, dispatch) => {
 };
 
 export const createUpdateBpaApplication = async (state, dispatch, status) => {
-  let fieldDocs = get(
-    state,
-    "screenConfiguration.preparedFinalObject.fieldDocumentsUploadRedux",
-    []
-  );
-  let fieldQsns = get(
-    state,
-    "screenConfiguration.preparedFinalObject.checkListUploaRedux",
-    []
-  );
-
-  let questions = fieldQsns.map(i =>({
-    question:i.question, value: i.dropDownValues.value, remarks: i.remarks
-  }));
-
-  let docs = fieldDocs.map(j =>({
-    code:j.documentCode, required: j.isDocumentRequired, documents: j.documents
-  }));
-
-  let fieldData = {
-    intiated: [{
-    questions : questions,
-    docs : docs
-     }]
-   };
- 
-  
+    
   let applicationId = get(
     state,
     "screenConfiguration.preparedFinalObject.BPA.id"
@@ -241,7 +215,7 @@ export const createUpdateBpaApplication = async (state, dispatch, status) => {
     set(payload, "tenantId", tenantId);
     set(payload, "action", status);
 
-    set(payload, "additionalDetails", {fieldData});
+    set(payload, "additionalDetails", {});
     set(payload, "units", null);
 
 

@@ -315,7 +315,7 @@ const setSearchResponse = async (
       "search-preview",
       "components.div.children.body.children.cardContent.children.fieldinspectionSummary",
       "visible",
-       false
+       true
     )
   )
   } else {
@@ -324,7 +324,7 @@ const setSearchResponse = async (
       "search-preview",
       "components.div.children.body.children.cardContent.children.fieldinspectionSummary",
       "visible",
-       true
+       false
     )
   )
   }
