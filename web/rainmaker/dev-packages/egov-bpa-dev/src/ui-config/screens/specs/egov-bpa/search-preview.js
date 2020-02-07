@@ -22,12 +22,13 @@ import jp from "jsonpath";
 import get from "lodash/get";
 import set from "lodash/set";
 import { getAppSearchResults } from "../../../../ui-utils/commons";
-import { searchBill , requiredDocumentsData, setNocDocuments } from "../utils/index";
+import { searchBill , requiredDocumentsData, setNocDocuments, requiredFieldInspectionData } from "../utils/index";
 import generatePdf from "../utils/generatePdfForBpa";
 // import { loadPdfGenerationDataForBpa } from "../utils/receiptTransformerForBpa";
 import { citizenFooter } from "./searchResource/citizenFooter";
 import { applicantSummary } from "./summaryResource/applicantSummary";
-import { basicSummary } from "./summaryResource/basicSummary"
+import { basicSummary } from "./summaryResource/basicSummary";
+import { fieldinspectionSummary } from "./summaryResource/fieldinspectionSummary";
 import { documentsSummary } from "./summaryResource/documentsSummary";
 import { scrutinySummary } from "./summaryResource/scrutinySummary";
 import { estimateSummary } from "./summaryResource/estimateSummary";
@@ -308,7 +309,26 @@ const setSearchResponse = async (
   const edcrNumber = response.Bpa["0"].edcrNumber;
   const status = response.Bpa["0"].status;
 
-  if ((status && status === "PENDING_APPL_FEE") || (status && status === "PENDING_SANC_FEE_PAYMENT")) {
+  if(status && status === "FIELDINSPECTION_INPROGRESS"){
+    dispatch(
+      handleField(
+      "search-preview",
+      "components.div.children.body.children.cardContent.children.fieldinspectionSummary",
+      "visible",
+       false
+    )
+  )
+  } else {
+    dispatch(
+      handleField(
+      "search-preview",
+      "components.div.children.body.children.cardContent.children.fieldinspectionSummary",
+      "visible",
+       true
+    )
+  )
+  }
+  if((status && status === "PENDING_APPL_FEE") || (status && status === "PENDING_SANC_FEE_PAYMENT") ) {
     dispatch(
       handleField(
         "search-preview",
@@ -413,7 +433,8 @@ const setSearchResponse = async (
       )
     );
   };
-
+  
+  requiredFieldInspectionData(state, dispatch, action);
   requiredDocumentsData(state, dispatch, action);
   setDownloadMenu(action, state, dispatch);
 };
@@ -455,6 +476,11 @@ const screenConfig = {
     set(
       action,
       "screenConfig.components.div.children.body.children.cardContent.children.basicSummary.children.cardContent.children.header.children.editSection.visible",
+      false
+    );
+    set(
+      action,
+      "screenConfig.components.div.children.body.children.cardContent.children.fieldinspectionSummary.children.cardContent.children.header.children.editSection.visible",
       false
     );
     set(
@@ -532,6 +558,7 @@ const screenConfig = {
         body: getCommonCard({
           // estimateSummary: estimateSummary,
           basicSummary: basicSummary,
+          fieldinspectionSummary: fieldinspectionSummary,
           scrutinySummary:scrutinySummary,
           applicantSummary: applicantSummary,
           documentsSummary: documentsSummary

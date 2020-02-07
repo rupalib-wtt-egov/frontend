@@ -3868,6 +3868,191 @@ const prepareDocumentsView = async (state, dispatch, action, appState) => {
   }  
 };
 
+
+const prepareFieldDocumentsUploadData = async( state, dispatch) => {  
+  let mdmsBody = {
+    MdmsCriteria: {
+      tenantId: 'pb',
+      moduleDetails: [
+        {
+          moduleName: "common-masters",
+          masterDetails: [
+            {
+              name: "DocumentType"
+            }
+          ]
+        },
+        {
+          moduleName: "BPA",
+          masterDetails: [
+            {
+              name: "DocTypeMapping"
+            }
+          ]
+        }
+      ]
+    }
+  };
+  try {
+    let payload = null;
+    payload = await httpRequest(
+      "post",
+      "/egov-mdms-service/v1/_search",
+      "_search",
+      [],
+      mdmsBody
+    );
+    dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
+  } catch (e) {
+    console.log(e);
+  }
+  let applicationDocuments = get(
+    state,
+    "screenConfiguration.preparedFinalObject.applyScreenMdmsData.BPA.DocTypeMapping",
+    []
+  );
+  let documentsDropDownValues = get(
+    state,
+    "screenConfiguration.preparedFinalObject.applyScreenMdmsData.common-masters.DocumentType",
+    []
+  );
+
+  let bpaDetails = get (
+    state,
+    "screenConfiguration.preparedFinalObject.BPA", 
+    {}
+  );
+  let fieldreqDocuments = get(
+    state,
+    "screenConfiguration.preparedFinalObject.applyFieldinspectionData.BPA.CheckList[0].docTypes",
+    {}
+  );
+  let applyFieldinspectionQstns = get(
+    state,
+    "screenConfiguration.preparedFinalObject.applyFieldinspectionData.BPA.CheckList[0].questions",
+    {}
+  );
+
+   const checklistSelect = [
+    {code:applyFieldinspectionQstns[0].fieldType.split("/")[0], label:applyFieldinspectionQstns[0].fieldType.split("/")[0]},
+    {code:applyFieldinspectionQstns[0].fieldType.split("/")[1], label:applyFieldinspectionQstns[0].fieldType.split("/")[1]},
+    {code:applyFieldinspectionQstns[0].fieldType.split("/")[2], label:applyFieldinspectionQstns[0].fieldType.split("/")[2]}
+   ];
+   
+   const FieldinspectionQstns = applyFieldinspectionQstns.map(v => ({ code: v.question, title: v.question, cards: [{
+    name:v.question, code: v.question, required: true, dropDownValues: {
+      label: "Select", required: true, menu:checklistSelect
+    }
+   }]
+  }));
+
+  let documents = []
+  applicationDocuments.forEach(doc => {
+    if(doc.WFState == "INITIATED" && doc.RiskType === bpaDetails.riskType && doc.ServiceType === bpaDetails.serviceType && doc.applicationType === bpaDetails.applicationType) { 
+      documents.push(doc.docTypes);
+    }
+  });
+  
+  if(documents[0] && documents[0].length > 0) {
+    let documentsList = [];
+  documents[0].forEach(doc => {
+    let code = doc.code;
+    doc.dropDownValues = [];
+    documentsDropDownValues.forEach(value => {
+      let values = value.code.slice(0, code.length);
+      if (code === values) {
+        doc.hasDropdown = true;
+        doc.dropDownValues.push(value);
+      }
+    });
+    documentsList.push(doc); 
+  });
+  const docList = documentsList.filter((el) => {
+    return fieldreqDocuments.some((f) => {
+      return f.code === el.code;
+    });
+  });
+  const bpaDocuments = docList;
+  let documentsContract = [];
+  let tempDoc = {};
+
+  bpaDocuments.forEach(doc => {
+    let card = {};
+    card["code"] = doc.code.split(".")[0];
+    card["title"] = doc.code.split(".")[0];
+    card["cards"] = [];
+    tempDoc[doc.code.split(".")[0]] = card;
+  });
+  bpaDocuments.forEach(doc => {
+    let card = {};
+    card["name"] = doc.code;
+    card["code"] = doc.code;
+    card["required"] = doc.required ? true : false;
+    if (doc.hasDropdown && doc.dropDownValues) {
+      let dropDownValues = {};
+      dropDownValues.label = "Select Documents";
+      dropDownValues.required = doc.required;
+      dropDownValues.menu = doc.dropDownValues.filter(item => {
+        return item.active;
+      });
+      dropDownValues.menu = dropDownValues.menu.map(item => {
+        return { code: item.code, label: item.code };
+      });
+      card["dropDownValues"] = dropDownValues;
+    }
+    tempDoc[doc.code.split(".")[0]].cards.push(card);
+  });
+
+  Object.keys(tempDoc).forEach(key => {
+    documentsContract.push(tempDoc[key]);
+  });
+  let applyFieldinspectionDocument = [];
+    documentsContract.forEach(doc => {
+      applyFieldinspectionDocument.push(doc);      
+    });
+  dispatch(prepareFinalObject("applyFieldinspectionDocument", applyFieldinspectionDocument));
+  dispatch(prepareFinalObject("FieldinspectionQstns", FieldinspectionQstns));
+  
+  }
+
+  
+}
+
+export const requiredFieldInspectionData = async (state, dispatch, action) => {
+  let mdmsBody = {
+    MdmsCriteria: {
+      tenantId: "pb",
+      moduleDetails: [
+          {
+              moduleName: "BPA",
+              masterDetails: [
+                  {
+                    name: "CheckList",
+                    filter : "$.[?(@.WFState==\"INITIATED\" && @.RiskType==\"LOW\" && @.applicationType==\"BUILDING_PLAN_SCRUTINY\" && @.ServiceType==\"NEW_CONSTRUCTION\")]"
+                      
+                  }
+              ]
+          }
+      ]
+  }
+  };
+  try {
+    let payload = null;
+    payload = await httpRequest(
+      "post",
+      "/egov-mdms-service/v1/_search",
+      "_search",
+      [],
+      mdmsBody
+    );
+    dispatch(prepareFinalObject("applyFieldinspectionData", payload.MdmsRes));
+    prepareFieldDocumentsUploadData(state, dispatch);
+  } catch (e) {
+    console.log(e);
+  }
+
+}
+
 export const prepareDocsInEmployee = (state, dispatch, action, appState, uploadedAppDocuments) => {
   let applicationDocuments = get(
     state,
