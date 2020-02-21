@@ -84,6 +84,11 @@ const CheckList = Loadable({
   loading: () => <Loading />
 });
 
+const PermitList = Loadable({
+  loader: () => import("./PermitList"),
+  loading: () => <Loading />
+});
+
 export {
   TestMolecules,
   RadioButtonsGroup,
@@ -100,5 +105,6 @@ export {
   UploadSingleFile,
   DividerWithLabel,
   BpaFeesEstimateCard,
-  CheckList
+  CheckList,
+  PermitList
 };

@@ -32,6 +32,7 @@ import { documentsSummary } from "./summaryResource/documentsSummary";
 import { scrutinySummary } from "./summaryResource/scrutinySummary";
 import { estimateSummary } from "./summaryResource/estimateSummary";
 import { fieldinspectionSummary } from "./summaryResource/fieldinspectionSummary";
+import { permitConditions } from "./summaryResource/permitConditions";
 import { httpRequest, edcrHttpRequest } from "../../../../ui-utils/api";
 import { statusOfNocDetails } from "../egov-bpa/applyResource/updateNocDetails";
 import { nocVerificationDetails } from "../egov-bpa/nocVerificationDetails";
@@ -531,6 +532,7 @@ const screenConfig = {
           // estimateSummary: estimateSummary,
           fieldSummary: fieldSummary,
           fieldinspectionSummary: fieldinspectionSummary,
+          permitConditions: permitConditions,          
           basicSummary: basicSummary,
           scrutinySummary:scrutinySummary,
           applicantSummary: applicantSummary,

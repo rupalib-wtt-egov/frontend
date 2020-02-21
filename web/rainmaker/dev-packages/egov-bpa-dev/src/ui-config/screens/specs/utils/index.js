@@ -3739,6 +3739,7 @@ export const requiredDocumentsData = async (state, dispatch, action) => {
         "",
         queryObject
       );
+      
     const wfState = wfPayload.ProcessInstances[0];
     let appState;
     const appWfState = wfState.state.state;
@@ -3780,18 +3781,47 @@ const prepareFieldDocumentsUploadData = async (state, dispatch, action, fieldInf
   let fieldInfo = []
   fieldInfoDocs.forEach(wfDoc => {
     if(wfDoc.WFState == appWfState && wfDoc.RiskType === bpaAppDetails.riskType && wfDoc.ServiceType === bpaAppDetails.serviceType && wfDoc.applicationType === bpaAppDetails.applicationType) { 
-      fieldInfo.push({"docTypes" : wfDoc.docTypes, "questions" : wfDoc.questions });
+      fieldInfo.push({"docTypes" : wfDoc.docTypes, "questions" : wfDoc.questions, "conditions" : wfDoc.questions });
       set(
         action,
         "screenConfig.components.div.children.body.children.cardContent.children.fieldinspectionSummary.visible",
         true
       );
+      set(
+        action,
+        "screenConfig.components.div.children.body.children.cardContent.children.permitConditions.visible",
+        true
+      );
     }
   });
 
+  let applyPermitConditions = [
+    "The development shall be undertaken strictly according to plans enclosed with necessary permission endorsement.",
+    "The land in question must be in lawful ownership and peaceful possession of the applicant.",
+    "The permission is valid for period of X(this is the validity period in years) years with effect from the date of issue.",
+    "Permission accorded under the provision cannot be construed as evidence in respect of right title interest of the plot over which the plan is approved.",
+    "Any dispute arising out of land record or in respect of right/ title/ interest after this approval the plan shall be treated automatically cancelled during the period of dispute.",
+    "Adequate safety precaution shall be provided at all stages of construction for safe guarding the life of workers and any public hazard.",
+    "The land/ Building shall be used exclusively for the above occupancy for which you applied and the uses shall not be changed to any other use without prior approval of this Authority.",
+    "Adequate space mentioned in the approved plan shall be kept open for parking and no part of it will be built upon.",
+    "The land over which construction is proposed is accessible by an approved means of access with sufficient road width."
+    ];
+
   let fieldreqDocuments = fieldInfo[0].docTypes;
   let applyFieldinspectionQstns = fieldInfo[0].questions;
+  // let applyPermitConditions = fieldInfo[0].conditions;
   let checklistSelect = [];
+  let permitlistSelect = [];
+
+  if (applyPermitConditions && applyPermitConditions.length > 0) {
+    const PermitListConditions = applyPermitConditions.map(v => ({
+      code: v, title: v, cards: [{
+        name: v, code: v, required: true
+      }]
+    }));
+    
+    dispatch(prepareFinalObject("PermitListConditions", PermitListConditions));    
+  }
 
   if (applyFieldinspectionQstns && applyFieldinspectionQstns.length > 0) {
     checklistSelect = [
@@ -3922,14 +3952,15 @@ const prepareDocumentsView = async (state, dispatch, action, appState) => {
   ];
 
     let additionalDetail = BPA.additionalDetails, 
-    fieldInspectionDetails, fieldInspectionDocs = [], fieldInspectionsQstions = [];
+    fieldInspectionDetails, fieldInspectionDocs = [], fieldInspectionsQstions = [], permitConditions = [];
     if(additionalDetail) {
       fieldInspectionDetails = additionalDetail["fieldinspection_pending"][0]
       fieldInspectionDocs = fieldInspectionDetails.docs;
       fieldInspectionsQstions = fieldInspectionDetails.questions;
+      permitConditions = fieldInspectionDetails.conditions;
     }
   
-    if(fieldInspectionDocs && fieldInspectionDocs.length > 0 && fieldInspectionsQstions && fieldInspectionsQstions.length > 0) {
+    if(fieldInspectionDocs && fieldInspectionDocs.length > 0 && fieldInspectionsQstions && fieldInspectionsQstions.length > 0 && permitConditions && permitConditions.length > 0) {
       let fiDocumentsPreview = [];
       fieldInspectionDocs.forEach(fiDoc => {
         fiDocumentsPreview.push({
