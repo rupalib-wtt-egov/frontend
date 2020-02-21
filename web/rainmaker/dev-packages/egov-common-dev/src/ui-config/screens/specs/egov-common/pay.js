@@ -50,7 +50,7 @@ const getPaymentCard = () => {
             children: {
                 paymentDetails: getCommonCard({
                     header: getCommonTitle({
-                        labelName: "Payment Collection Details111",
+                        labelName: "Payment Collection Details",
                         labelKey: "NOC_PAYMENT_HEAD"
                     }),
                     estimateDetails,
