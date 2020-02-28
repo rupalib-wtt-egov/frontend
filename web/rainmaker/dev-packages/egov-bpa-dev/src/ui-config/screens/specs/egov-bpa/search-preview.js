@@ -41,6 +41,7 @@ import "../egov-bpa/applyResource/index.css";
 import "../egov-bpa/applyResource/index.scss";
 import { getUserInfo, getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import { fieldSummary } from "./summaryResource/fieldSummary";
+import { permitConditionsSummary } from "./summaryResource/permitConditionsSummary";
 
 export const ifUserRoleExists = role => {
   let userInfo = JSON.parse(getUserInfo());
@@ -471,11 +472,26 @@ const screenConfig = {
       "screenConfig.components.div.children.body.children.cardContent.children.fieldSummary.children.cardContent.visible",
       false
     );
+    // set(
+    //   action,
+    //   "screenConfig.components.div.children.body.children.cardContent.children.permitConditionsSummary.children.cardContent.visible",
+    //   false
+    // );
     set(
       action,
       "screenConfig.components.div.children.body.children.cardContent.children.fieldinspectionSummary.visible",
       false
     );
+    // set(
+    //   action,
+    //   "screenConfig.components.div.children.body.children.cardContent.children.permitConditions.visible",
+    //   false
+    // );
+    // set(
+    //   action,
+    //   "screenConfig.components.div.children.body.children.cardContent.children.permitConditions.children.cardContent.children.additionalConditionsContainer.children.multipleApplicantContainer.children.additionalInfo.props.items[0].visible",
+    //   false
+    // );
 
     return action;
   },
@@ -532,6 +548,7 @@ const screenConfig = {
           // estimateSummary: estimateSummary,
           fieldSummary: fieldSummary,
           fieldinspectionSummary: fieldinspectionSummary,
+          permitConditionsSummary: permitConditionsSummary,
           permitConditions: permitConditions,          
           basicSummary: basicSummary,
           scrutinySummary:scrutinySummary,

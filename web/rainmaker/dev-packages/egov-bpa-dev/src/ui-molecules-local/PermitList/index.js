@@ -194,7 +194,7 @@ class PermitList extends Component {
       });
     }
     prepareFinalObject("PermitListUploaRedux", {});
-    let requiredDocuments = [], finalQstn = [];
+    let requiredDocuments = [];
     if (documnts && documnts.length > 0) {
       documnts.forEach(documents => {
         if (documents && documents.question) {
@@ -202,36 +202,24 @@ class PermitList extends Component {
           prmts = documents.question;
 
           if(bpaDetails.additionalDetails) {
-            if(bpaDetails.additionalDetails.fieldinspection_pending && bpaDetails.additionalDetails.fieldinspection_pending[0]) {
-              if(bpaDetails.additionalDetails.fieldinspection_pending[0].conditions) {
-                finalQstn.push(prmts);
-                bpaDetails.additionalDetails.fieldinspection_pending[0].conditions = finalQstn
+              if(bpaDetails.additionalDetails.pendingapproval) {
+                bpaDetails.additionalDetails.pendingapproval.push(prmts);
               } else {
-                bpaDetails.additionalDetails.fieldinspection_pending.push({"questions" : [],"docs" : [], "conditions" : prmts});
+                bpaDetails.additionalDetails.push({"pendingapproval" : []});
               }
-            }
           } else {
             bpaDetails.additionalDetails = [];
-            let documnt = [], fiDocs = [], details;
-            documnt[0] = {}; 
-            documnt[0].conditions = [];
-            documnt[0].docs = [];
-            documnt[0].questions = [];
-            documnt[0].conditions.push(prmts);
-            fiDocs.push({
-              "questions" : [],              
-              "docs" : [],
-              "conditions" : documnt[0].conditions,
-            });
-            details = { "fieldinspection_pending" : fiDocs};
+            let fiDocs = [], details;
+            fiDocs.push(prmts);
+            details = { "pendingapproval" : fiDocs};
             finalDocs.push(details);
             finalDocs = finalDocs[0];
             bpaDetails.additionalDetails = finalDocs
           }
         }
       });
-      if(bpaDetails.additionalDetails && bpaDetails.additionalDetails["fieldinspection_pending"][0] && bpaDetails.additionalDetails["fieldinspection_pending"][0].question) {
-        prepareFinalObject("BPA",  bpaDetails.additionalDetails.fieldinspection_pending[0].question);
+      if(bpaDetails.additionalDetails && bpaDetails.additionalDetails["pendingapproval"]) {
+        prepareFinalObject("BPA",  bpaDetails.additionalDetails.pendingapproval);
       }
     }
   }
@@ -242,20 +230,28 @@ class PermitList extends Component {
 
   handleFieldChange = (key, event) => {
     const { PermitListUploaRedux, prepareFinalObject, bpaDetails } = this.props;
-    let PermitListDocuments = {
-      ...PermitListUploaRedux,
-      [key]: {
-        ...PermitListUploaRedux[key],
-        question: event.target.value
+    if(event.target.checked){
+      let PermitListDocuments = {
+        [key]: {
+          question: event.target.value
+        }
+      };
+      prepareFinalObject(`PermitListUploaRedux`, PermitListDocuments);
+  
+      let isEmployee = process.env.REACT_APP_NAME === "Citizen" ? false : true
+  
+      if(isEmployee) {
+        this.prepareDocumentsInEmployee(PermitListDocuments, bpaDetails);
       }
-    };
-    prepareFinalObject(`PermitListUploaRedux`, PermitListDocuments);
-
-    let isEmployee = process.env.REACT_APP_NAME === "Citizen" ? false : true
-
-    if(isEmployee) {
-      this.prepareDocumentsInEmployee(PermitListDocuments, bpaDetails);
+    } else {     
+      let array = bpaDetails.additionalDetails.pendingapproval;
+      let remvCndtns = event.target.value;      
+      var newArray = array.filter((i)=>i != remvCndtns);
+      // let fnlCnds = {"pendingapproval" : newArray}
+      bpaDetails.additionalDetails.pendingapproval = newArray;
+      prepareFinalObject("BPA.additionalDetails.pendingapproval",  newArray);
     }
+
        
   };
 
@@ -301,7 +297,7 @@ class PermitList extends Component {
         >
             <Checkbox              
               onChange={event => this.handleFieldChange(key, event)}
-              value={card.name}            
+              value={card.name}        
             />
           
         </Grid>

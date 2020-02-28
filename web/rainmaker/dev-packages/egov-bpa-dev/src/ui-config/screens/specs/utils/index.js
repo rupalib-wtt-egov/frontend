@@ -3759,8 +3759,45 @@ export const requiredDocumentsData = async (state, dispatch, action) => {
       let fieldInfoDocs = payload.MdmsRes.BPA.CheckList;
       prepareFieldDocumentsUploadData(state, dispatch, action, fieldInfoDocs, appWfState);
     }
+    if(wfState.state.state == "PENDINGAPPROVAL" && payload && payload.MdmsRes && payload.MdmsRes.BPA && payload.MdmsRes.BPA.CheckList) {
+      let fieldInfoDocs = payload.MdmsRes.BPA.CheckList;
+      prepareApprovalChecklistData(state, dispatch, action, fieldInfoDocs, appWfState);
+    }
   } catch (e) {
     console.log(e);
+  }
+}
+
+const prepareApprovalChecklistData = async (state, dispatch, action, fieldInfoDocs, appWfState) => {
+  let appState = get(
+    state.screenConfiguration.preparedFinalObject, "BPA.status",
+    []
+  );
+
+  let bpaAppDetails = get ( state.screenConfiguration.preparedFinalObject, "BPA", {});
+
+  let conditionsInfo = [];
+  fieldInfoDocs.forEach(wfDoc => {
+    if(wfDoc.WFState == appWfState && wfDoc.RiskType === bpaAppDetails.riskType && wfDoc.ServiceType === bpaAppDetails.serviceType && wfDoc.applicationType === bpaAppDetails.applicationType) { 
+      conditionsInfo.push({"conditions" : wfDoc.conditions });      
+      set(
+        action,
+        "screenConfig.components.div.children.body.children.cardContent.children.permitConditions.visible",
+        true
+      );
+    }
+  });
+
+  let applyPermitConditions = conditionsInfo[0].conditions;
+
+  if (applyPermitConditions && applyPermitConditions.length > 0) {
+    const PermitListConditions = applyPermitConditions.map(v => ({
+      code: v, title: v, cards: [{
+        name: v, code: v, required: true
+      }]
+    }));
+    
+    dispatch(prepareFinalObject("PermitListConditions", PermitListConditions));    
   }
 }
 
@@ -3781,7 +3818,7 @@ const prepareFieldDocumentsUploadData = async (state, dispatch, action, fieldInf
   let fieldInfo = []
   fieldInfoDocs.forEach(wfDoc => {
     if(wfDoc.WFState == appWfState && wfDoc.RiskType === bpaAppDetails.riskType && wfDoc.ServiceType === bpaAppDetails.serviceType && wfDoc.applicationType === bpaAppDetails.applicationType) { 
-      fieldInfo.push({"docTypes" : wfDoc.docTypes, "questions" : wfDoc.questions, "conditions" : wfDoc.questions });
+      fieldInfo.push({"docTypes" : wfDoc.docTypes, "questions" : wfDoc.questions, "conditions" : wfDoc.conditions });
       set(
         action,
         "screenConfig.components.div.children.body.children.cardContent.children.fieldinspectionSummary.visible",
@@ -3806,10 +3843,9 @@ const prepareFieldDocumentsUploadData = async (state, dispatch, action, fieldInf
     "Adequate space mentioned in the approved plan shall be kept open for parking and no part of it will be built upon.",
     "The land over which construction is proposed is accessible by an approved means of access with sufficient road width."
     ];
-
   let fieldreqDocuments = fieldInfo[0].docTypes;
   let applyFieldinspectionQstns = fieldInfo[0].questions;
-  // let applyPermitConditions = fieldInfo[0].conditions;
+  // let applyPermitConditions = fieldInfoDocs[3].conditions;
   let checklistSelect = [];
   let permitlistSelect = [];
 
@@ -3957,10 +3993,14 @@ const prepareDocumentsView = async (state, dispatch, action, appState) => {
       fieldInspectionDetails = additionalDetail["fieldinspection_pending"][0]
       fieldInspectionDocs = fieldInspectionDetails.docs;
       fieldInspectionsQstions = fieldInspectionDetails.questions;
-      permitConditions = fieldInspectionDetails.conditions;
-    }
+      permitConditions = fieldInspectionDetails.conditions;      
+  }
+    // if(additionalDetail) {
+    //   fieldInspectionDetails = additionalDetail["pendingapproval"][0]
+    //   permitConditions = fieldInspectionDetails.conditions;      
+    // }
   
-    if(fieldInspectionDocs && fieldInspectionDocs.length > 0 && fieldInspectionsQstions && fieldInspectionsQstions.length > 0 && permitConditions && permitConditions.length > 0) {
+    if(fieldInspectionDocs && fieldInspectionDocs.length > 0 && fieldInspectionsQstions && fieldInspectionsQstions.length > 0) {
       let fiDocumentsPreview = [];
       fieldInspectionDocs.forEach(fiDoc => {
         fiDocumentsPreview.push({
@@ -3978,6 +4018,14 @@ const prepareDocumentsView = async (state, dispatch, action, appState) => {
       );
       dispatch(prepareFinalObject("fieldInspectionDocumentsDetailsPreview", fieldInspectionDocuments));
       dispatch(prepareFinalObject("fieldInspectionCheckListDetailsPreview", fieldInspectionsQstions)); 
+    }
+    if(permitConditions && permitConditions.length > 0){
+      set(
+        action,
+        "screenConfig.components.div.children.body.children.cardContent.children.permitConditionsSummary.children.cardContent.visible",
+        true
+      );
+      dispatch(prepareFinalObject("permitConditionsListDetailsPreview", permitConditions));
     }
 
   allDocuments.forEach(doc => {
