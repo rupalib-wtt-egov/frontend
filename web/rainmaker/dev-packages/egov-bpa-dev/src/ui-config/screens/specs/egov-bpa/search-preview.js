@@ -391,6 +391,9 @@ const setSearchResponse = async (
   }
 
   dispatch(prepareFinalObject("BPA", response.Bpa[0]));
+  if(response && response.Bpa["0"] && response.Bpa["0"].documents) {
+    dispatch(prepareFinalObject("BPA.temp.documents", response.Bpa["0"].documents));
+  }
     let edcrRes = await edcrHttpRequest(
       "post",
       "/edcr/rest/dcr/scrutinydetails?edcrNumber=" + edcrNumber + "&tenantId=" + tenantId,
