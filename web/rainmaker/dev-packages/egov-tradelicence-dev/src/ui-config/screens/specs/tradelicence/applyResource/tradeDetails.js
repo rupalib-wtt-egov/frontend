@@ -660,7 +660,7 @@ const accessoriesCard = {
                   )
                 );
               }
-            } catch (e) {
+          } catch (e) {
               console.log(e);
             }
           }
@@ -866,6 +866,14 @@ export const tradeDetails = getCommonCard({
             set(state.screenConfiguration.preparedFinalObject,"LicensesTemp[0].renewal", true);
             dispatch(toggleSpinner());
             fillOldLicenseData(state, dispatch);
+            dispatch(
+              handleField(
+                "apply",
+                `components.div.children.formwizardFirstStep.children.tradeDetails.children.cardContent.children.accessoriesCard.props.items[0].item0.children.cardContent.children.accessoriesCardContainer.children.accessoriesCount`,
+                "props.disabled",
+                false
+              )
+            );
             
           }
         }
