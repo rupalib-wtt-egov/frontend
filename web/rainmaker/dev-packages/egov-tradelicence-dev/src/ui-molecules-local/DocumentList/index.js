@@ -134,7 +134,6 @@ class DocumentList extends Component {
         }
       ]
     };
-
     prepareFinalObject("LicensesTemp[0].uploadedDocsInRedux", {
       ...uploadedDocuments
     });
@@ -192,7 +191,7 @@ class DocumentList extends Component {
       <div style={{ paddingTop: 10 }}>
         {documents &&
           documents.map((document, key) => {
-            const currentDocumentProps =  inputProps.filter(item => item.type === document.name);
+            {/* const currentDocumentProps =  inputProps.filter(item => item.type === document.name); */}
             return (
               <div
                 key={key}
@@ -230,8 +229,10 @@ class DocumentList extends Component {
                     </Typography>
                     <Typography variant="caption">
                       <LabelContainer
-                     labelName={currentDocumentProps[0].description.labelName}
-                     labelKey={currentDocumentProps[0].description.labelKey}
+                     labelName={document.description.labelName}
+                     labelKey={document.description.labelKey}
+                     //labelName={currentDocumentProps[0].description.labelName}
+                     //labelKey={currentDocumentProps[0].description.labelKey}
                       />
                     </Typography>
                   </Grid>
@@ -247,7 +248,8 @@ class DocumentList extends Component {
                       documents={this.state.uploadedDocuments[key]}
                       onButtonClick={() => this.onUploadClick(key)}
                       buttonLabel={this.props.buttonLabel}
-                      inputProps={currentDocumentProps[0].formatProps}
+                      //inputProps={currentDocumentProps[0].formatProps}
+                      inputProps={document.formatProps}
                     />
                   </Grid>
                 </Grid>

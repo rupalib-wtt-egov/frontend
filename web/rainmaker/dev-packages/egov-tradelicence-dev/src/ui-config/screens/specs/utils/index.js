@@ -990,6 +990,22 @@ export const downloadCertificateForm = (Licenses,mode='download') => {
 
 
 
+export const prepareDocumentTypeObjNew = documents => {
+  let documentsArr =
+    documents.length > 0
+      ? documents.reduce((documentsArr, item, ind) => {
+        documentsArr.push({
+          ...item,
+         // name: item,
+          // required: true,
+          jsonPath: `Licenses[0].tradeLicenseDetail.applicationDocuments[${ind}]`,
+          // statement: getStatementForDocType(item)
+        });
+        return documentsArr;
+      }, [])
+      : [];
+  return documentsArr;
+};
 
 
 
@@ -1808,6 +1824,110 @@ export const updateDropDowns = async (
   setOwnerShipDropDownFieldChange(state, dispatch, payload);
 };
 
+const updatedDoc =[
+  {
+    "applicationType": "NEW",
+
+    "documentList": [
+      {
+        name : "OWNERIDPROOF",
+        required: true,
+        description: {
+          labelName: "Only .jpg and .pdf files. 6MB max file size.",
+          labelKey: "TL_UPLOAD_RESTRICTIONS"
+        },
+        formatProps :{
+          accept : "image/*, .pdf, .png, .jpeg",
+        }, 
+        maxFileSize: 6000,
+        statement: "TL_OWNERIDPROOF_NOTE"
+      },
+      {
+        name : "OWNERSHIPPROOF",
+        required: true,
+        description: {
+          labelName: "Only .jpg and .pdf files. 6MB max file size.",
+          labelKey: "TL_UPLOAD_RESTRICTIONS"
+        },
+        formatProps :{
+          accept : "image/*, .pdf, .png, .jpeg",
+        },        
+        maxFileSize: 6000,
+        statement: "TL_OWNERSHIPPROOF_NOTE"
+      },
+      {
+        name : "OWNERPHOTO",
+        required: true,
+        description: {
+          labelName: "Only .png and .jpeg 6MB max file size.",
+          labelKey: "TL_UPLOAD_IMAGE_RESTRICTIONS"
+        },
+        formatProps :{
+          accept: "image/*, .png, .jpeg",
+        },        
+        maxFileSize: 3000,
+        statement: "TL_OWNERPHOTO_NOTE"
+      }
+    ]
+  },
+  {
+    "applicationType": "RENEWAL",
+    "documentList": [
+      {
+        name : "OWNERIDPROOF",
+        required: true,
+        description: {
+          labelName: "Only .jpg and .pdf files. 6MB max file size.",
+          labelKey: "TL_UPLOAD_RESTRICTIONS"
+        },
+        formatProps :{
+          accept : "image/*, .pdf, .png, .jpeg",
+        }, 
+        maxFileSize: 6000,
+        statement: "TL_OWNERIDPROOF_NOTE"
+      },
+      {
+        name : "OWNERSHIPPROOF",
+        required: true,
+        description: {
+          labelName: "Only .jpg and .pdf files. 6MB max file size.",
+          labelKey: "TL_UPLOAD_RESTRICTIONS"
+        },
+        formatProps :{
+          accept : "image/*, .pdf, .png, .jpeg",
+        },        
+        maxFileSize: 6000,
+        statement: "TL_OWNERSHIPPROOF_NOTE"
+      },
+      {
+        name : "OWNERPHOTO",
+        required: true,
+        description: {
+          labelName: "Only .png and .jpeg 6MB max file size.",
+          labelKey: "TL_UPLOAD_IMAGE_RESTRICTIONS"
+        },
+        formatProps :{
+          accept: "image/*, .png, .jpeg",
+        },        
+        maxFileSize: 3000,
+        statement: "TL_OWNERPHOTO_NOTE"
+      },
+      {
+        name : "OLDLICENCENO",
+        description: {
+          labelName: "Only .jpg and .pdf files. 6MB max file size.",
+          labelKey: "TL_UPLOAD_RESTRICTIONS"
+        },
+        formatProps :{
+          accept : "image/*, .pdf, .png, .jpeg",
+        },  
+        maxFileSize: 6000,      
+        statement: "TL_OLDLICENCENO_NOTE"    
+      },
+    ]
+  }
+]
+
 export const getDocList = (state, dispatch) => {
   const tradeSubTypes = get(
     state.screenConfiguration.preparedFinalObject,
@@ -1831,8 +1951,8 @@ export const getDocList = (state, dispatch) => {
   
   let applicationDocArray = [];
   selectedTypes && selectedTypes.forEach(tradeSubTypeDoc => {
-   const  applicationarrayTemp= getQueryArg(window.location.href , "action") === "EDITRENEWAL" || applicationType==="RENEWAL" ? tradeSubTypeDoc[0].applicationDocument.filter(item => item.applicationType === "RENEWAL")[0].documentList : tradeSubTypeDoc[0].applicationDocument.filter(item => item.applicationType === "NEW")[0].documentList;
-   
+  // const  applicationarrayTemp= getQueryArg(window.location.href , "action") === "EDITRENEWAL" || applicationType==="RENEWAL" ? tradeSubTypeDoc[0].applicationDocument.filter(item => item.applicationType === "RENEWAL")[0].documentList : tradeSubTypeDoc[0].applicationDocument.filter(item => item.applicationType === "NEW")[0].documentList;
+  const  applicationarrayTemp= getQueryArg(window.location.href , "action") === "EDITRENEWAL" || applicationType==="RENEWAL" ? updatedDoc.filter(item => item.applicationType === "RENEWAL")[0].documentList : updatedDoc.filter(item => item.applicationType === "NEW")[0].documentList;
     applicationDocArray = [
       ...applicationDocArray,
       ...applicationarrayTemp 
@@ -1843,7 +1963,7 @@ export const getDocList = (state, dispatch) => {
     return self.indexOf(value) === index;
   }
   applicationDocArray = applicationDocArray.filter(onlyUnique);
-  let applicationDocument = prepareDocumentTypeObj(applicationDocArray);
+  let applicationDocument = prepareDocumentTypeObjNew(applicationDocArray);
   dispatch(
     prepareFinalObject(
       "LicensesTemp[0].applicationDocuments",
