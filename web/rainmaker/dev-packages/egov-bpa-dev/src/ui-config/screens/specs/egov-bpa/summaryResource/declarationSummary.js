@@ -1,4 +1,4 @@
-import { getCommonContainer } from "egov-ui-framework/ui-config/screens/specs/utils";
+import { getCommonContainer, getCommonTitle } from "egov-ui-framework/ui-config/screens/specs/utils";
 
 const declarationDetails = getCommonContainer({
   citizen: {
@@ -39,7 +39,7 @@ const declarationDetails = getCommonContainer({
     props: {
       label: {
         labelName: "I am responsible for any defects/errors/omissions made while submitting the application",
-        labelKey: "BPA_STAKEHOLDER_DECLARAION_LABEL"
+        labelKey: "BPA_SECOND_STAKEHOLDER_DECLARAION_LABEL"
       },
       jsonPath: "BPA.isDeclaration",
     },
@@ -49,6 +49,18 @@ const declarationDetails = getCommonContainer({
 });
 
 export const declarationSummary = getCommonContainer({
+  headers: getCommonTitle(
+    {
+      labelName: "Declaration",
+      labelKey: "BPA_DECLARATION_TITLE"
+    },
+    {
+      style: {
+        marginBottom: 10,
+        marginTop: 18
+      }
+    }
+  ),
   header: {
     uiFramework: "custom-atoms",
     componentPath: "Container",

@@ -31,7 +31,7 @@ const getMDMSData = async (dispatch) => {
           masterDetails: [
             {
               name: "tenants"
-            }
+            },{name: "citymodule"}
           ]
         }
       ]
@@ -45,14 +45,17 @@ const getMDMSData = async (dispatch) => {
       [],
       mdmsBody
     );
+    payload.MdmsRes.tenant.tenants=payload.MdmsRes.tenant.citymodule[1].tenants;
     // console.log("payload--", payload)
     dispatch(prepareFinalObject("searchScreenMdmsData", payload.MdmsRes));
-    dispatch(
-      prepareFinalObject(
-        "searchScreen.tenantId",
-        tenant
-      )
-    );
+    if(process.env.REACT_APP_NAME != "Citizen"){
+      dispatch(
+        prepareFinalObject(
+          "searchScreen.tenantId",
+          tenant
+        )
+      );
+    }
   } catch (e) {
     console.log(e);
   }

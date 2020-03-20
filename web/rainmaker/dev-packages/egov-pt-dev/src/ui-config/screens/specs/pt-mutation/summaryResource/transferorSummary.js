@@ -11,6 +11,7 @@ import {
 import { gotoApplyWithStep } from "../../utils/index";
 import { getTransformedLocale } from "egov-ui-framework/ui-utils/commons";
 import { checkValueForNA } from "../../utils";
+import get from "lodash/get";
 
 export const transferorSummary = getCommonGrayCard({
   header: {
@@ -146,6 +147,35 @@ export const transferorSummary = getCommonGrayCard({
               //   return convertEpochToDate(value);
               // }
             }
+          ),
+          ownerSpecialCategoryType: getLabelWithValue(
+            {
+              labelName: "Document Type",
+              labelKey: "PT_CATEGORY_DOCUMENT_TYPE"
+            },
+            {
+              jsonPath:
+              "Property.ownersInit[0].documentType" ,
+              callBack: checkValueForNA
+              // callBack: value => {
+              //   return convertEpochToDate(value);
+              // }
+            }
+          ),
+          ownerSpecialCategoryDocumentId: getLabelWithValue(
+            {
+              labelName: "Document Id",
+              labelKey: "PT_CATEGORY_DOCUMENT_ID"
+            },
+            {
+              jsonPath:
+              "Property.ownersInit[0].documentUid" ,
+              callBack: checkValueForNA
+              // callBack: value => {
+              //   return convertEpochToDate(value);
+              // }
+            },
+            
           ),
           ownerAddress: getLabelWithValue(
             {

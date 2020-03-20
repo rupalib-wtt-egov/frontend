@@ -6,7 +6,7 @@ import {
   getLabel,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
-import { convertEpochToDate } from "../../utils";
+import { convertEpochToDateAndHandleNA } from "../../utils";
 
 const service = getQueryArg(window.location.href, "service")
 
@@ -177,7 +177,7 @@ export const reviewConnectionExecutionDate = getLabelWithValue(
   },
   {
     jsonPath: "WaterConnection[0].connectionExecutionDate",
-    callBack: convertEpochToDate
+    callBack: convertEpochToDateAndHandleNA
   }
 );
 export const reviewMeterId = getLabelWithValue(
@@ -195,7 +195,7 @@ export const reviewMeterInstallationDate = getLabelWithValue(
   },
   {
     jsonPath: "WaterConnection[0].meterInstallationDate",
-    callBack: convertEpochToDate
+    callBack: convertEpochToDateAndHandleNA
   }
 );
 
@@ -204,7 +204,7 @@ export const reviewInitialMeterReading = getLabelWithValue(
     labelName: "Initial Meter Reading",
     labelKey: "WS_ADDN_DETAILS_INITIAL_METER_READING"
   },
-  { jsonPath: "WaterConnection[0].initialMeterReading" }
+  { jsonPath: "WaterConnection[0].additionalDetails.initialMeterReading" }
 );
 
 export const getReviewOwner = (isEditable = true) => {

@@ -20,8 +20,10 @@ import { getLocale } from "egov-ui-kit/utils/localStorageUtils";
 import jp from "jsonpath";
 import get from "lodash/get";
 import set from "lodash/set";
-import { getSearchResults, generatePdfFromDiv } from "../../../../ui-utils/commons";
-import { searchBill, getReceiptData, getpayments, downloadCertificateForm, downloadReceitForm } from "../utils/index";
+import { getSearchResults } from "../../../../ui-utils/commons";
+import { httpRequest } from "../../../../ui-utils";
+import {generatePdfFromDiv } from "egov-ui-kit/utils/PTCommon";
+import { searchBill, showHideMutationDetailsCard, getpayments, downloadCertificateForm, downloadReceitForm } from "../utils/index";
 import generatePdf from "../utils/receiptPdf";
 import { loadPdfGenerationData } from "../utils/receiptTransformer";
 import { citizenFooter } from "./searchResource/citizenFooter";
@@ -171,14 +173,14 @@ const setDownloadMenu = (state, dispatch, tenantId, applicationNumber) => {
   let applicationDownloadObject = {
     label: { labelName: "Application", labelKey: "MT_APPLICATION" },
     link: () => {
-      generatePdfFromDiv("download", applicationNumber)
+      generatePdfFromDiv("download", applicationNumber,"#material-ui-cardContent")
     },
     leftIcon: "assignment"
   };
   let applicationPrintObject = {
     label: { labelName: "Application", labelKey: "MT_APPLICATION" },
     link: () => {
-      generatePdfFromDiv("print", applicationNumber)
+      generatePdfFromDiv("print", applicationNumber,"#material-ui-cardContent")
     },
     leftIcon: "assignment"
   };
@@ -403,6 +405,36 @@ export const setData = async (state, dispatch, applicationNumber, tenantId) => {
 
 }
 
+const getPropertyConfigurationMDMSData = async (action, state, dispatch) => {
+  let mdmsBody = {
+    MdmsCriteria: {
+      tenantId: 'pb',
+      moduleDetails: [
+        {
+          moduleName: "PropertyTax",
+          masterDetails: [{name: "PropertyConfiguration"}]
+        }
+      ]
+    }
+  };
+  try {
+    let payload = null;
+    payload = await httpRequest(
+      "post",
+      "/egov-mdms-service/v1/_search",
+      "_search",
+      [],
+      mdmsBody
+    );
+
+    let propertyConfiguation = get(payload, "MdmsRes.PropertyTax.PropertyConfiguration");
+    dispatch(prepareFinalObject("PropertyConfiguration", propertyConfiguation));
+    showHideMutationDetailsCard(action, state, dispatch);
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 const screenConfig = {
   uiFramework: "material-ui",
   name: "search-preview",
@@ -412,6 +444,7 @@ const screenConfig = {
       "applicationNumber"
     );
     const tenantId = getQueryArg(window.location.href, "tenantId");
+    
     dispatch(fetchLocalizationLabel(getLocale(), tenantId, tenantId));
     searchBill(dispatch, applicationNumber, tenantId);
     let businessServicesData = JSON.parse(localStorage.getItem('businessServiceData'));
@@ -466,6 +499,25 @@ const screenConfig = {
       "screenConfig.components.div.children.body.children.cardContent.children.transferorInstitutionSummary.children.cardContent.children.header.children.editSection.visible",
       false
     );
+  
+    let categoryType = get(
+      state.screenConfiguration.preparedFinalObject,
+      "Property.ownersTemp[0].ownerType"
+    ); 
+    if(categoryType === "NONE"){
+      set(
+        action,
+        "screenConfig.components.div.children.body.children.cardContent.children.transfereeSummary.children.cardContent.children.cardOne.props.scheama.children.cardContent.children.ownerContainer.children.ownerDocumentId.visible",
+        false
+      );
+      set(
+        action,
+        "screenConfig.components.div.children.body.children.cardContent.children.transfereeSummary.children.cardContent.children.cardOne.props.scheama.children.cardContent.children.ownerContainer.children.ownerSpecialDocumentType.visible",
+        false
+      );
+      
+     
+   }
     // set(
     //   action,
     //   "screenConfig.components.div.children.body.children.cardContent.children.documentsSummary.children.cardContent.children.header.children.editSection.visible",
@@ -485,7 +537,7 @@ const screenConfig = {
       "screenConfig.components.div.children.headerDiv.children.helpSection.children",
       printCont
     );
-
+    getPropertyConfigurationMDMSData(action, state, dispatch);
     return action;
   },
   components: {

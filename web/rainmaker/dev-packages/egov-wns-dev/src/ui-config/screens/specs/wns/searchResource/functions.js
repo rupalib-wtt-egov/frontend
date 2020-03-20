@@ -1,7 +1,7 @@
 import get from "lodash/get";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { getSearchResults, fetchBill, getSearchResultsForSewerage } from "../../../../../ui-utils/commons";
-import { convertEpochToDate,convertDateToEpoch, getTextToLocalMapping } from "../../utils/index";
+import { convertEpochToDate,convertDateToEpoch, getTextToLocalMapping, resetFieldsForApplication, resetFieldsForConnection } from "../../utils/index";
 import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { validateFields } from "../../utils";
 import { getUserInfo } from "egov-ui-kit/utils/localStorageUtils";
@@ -13,15 +13,17 @@ export const searchApiCall = async (state, dispatch) => {
   let getCurrentTab = get(state.screenConfiguration.preparedFinalObject, "currentTab");
   let currentSearchTab = getCurrentTab === undefined ? "SEARCH_CONNECTION" : getCurrentTab;
   if (currentSearchTab === "SEARCH_CONNECTION") {
+    resetFieldsForApplication(state, dispatch);
     await renderSearchConnectionTable(state, dispatch);
   } else {
+    resetFieldsForConnection(state, dispatch);
     await renderSearchApplicationTable(state, dispatch);
   }
 }
 
 const renderSearchConnectionTable = async (state, dispatch) => {
   let queryObject = [{ key: "tenantId", value: JSON.parse(getUserInfo()).tenantId }, { key: "offset", value: "0" }];
-  let searchScreenObject = get(state.screenConfiguration.preparedFinalObject, "searchScreen", {});
+  let searchScreenObject = get(state.screenConfiguration.preparedFinalObject, "searchConnection", {});
   const isSearchBoxFirstRowValid = validateFields(
     "components.div.children.showSearches.children.showSearchScreens.props.tabs[0].tabContent.wnsApplication.children.cardContent.children.wnsApplicationContainer.children",
     state,

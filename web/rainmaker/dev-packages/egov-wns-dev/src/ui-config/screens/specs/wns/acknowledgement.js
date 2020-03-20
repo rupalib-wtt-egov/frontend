@@ -10,8 +10,9 @@ import { paymentFailureFooter } from "./acknowledgementResource/paymentFailureFo
 import acknowledgementCard from "./acknowledgementResource/acknowledgementUtils";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { loadReceiptGenerationData } from "../utils/receiptTransformer";
-import get from "lodash/get";
+import { downloadApp, getSearchResultsForSewerage, getSearchResults, findAndReplace } from "../../../../ui-utils/commons";
 import set from "lodash/set";
+import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 
 const getAcknowledgementCard = (
   state,
@@ -478,101 +479,108 @@ export const downloadPrintContainer = (
   action,
   state,
   dispatch,
-  status,
+  appStatus,
   applicationNumber,
   tenantId
 ) => {
   /** MenuButton data based on status */
   let downloadMenu = [];
   let printMenu = [];
-  let tlCertificateDownloadObject = {
-    label: { labelName: "TL Certificate", labelKey: "TL_CERTIFICATE" },
+  let wsEstimateDownloadObject = {
+    label: { labelKey: "WS_ESTIMATION_NOTICE" },
     link: () => {
-      const { Licenses } = state.screenConfiguration.preparedFinalObject;
-      downloadCertificateForm(Licenses);
+      const { WaterConnection } = state.screenConfiguration.preparedFinalObject;
+      downloadApp(WaterConnection, 'estimateNotice');
     },
     leftIcon: "book"
   };
-  let tlCertificatePrintObject = {
-    label: { labelName: "TL Certificate", labelKey: "TL_CERTIFICATE" },
+  let wsEstimatePrintObject = {
+    label: { labelKey: "WS_ESTIMATION_NOTICE" },
     link: () => {
-      const { Licenses } = state.screenConfiguration.preparedFinalObject;
-      downloadCertificateForm(Licenses, 'print');
+      const { WaterConnection } = state.screenConfiguration.preparedFinalObject;
+      downloadApp(WaterConnection, 'estimateNotice', 'print');
     },
     leftIcon: "book"
   };
-  let receiptDownloadObject = {
-    label: { labelName: "Receipt", labelKey: "TL_RECEIPT" },
+  let sanctionDownloadObject = {
+    label: { labelKey: "WS_SANCTION_LETTER" },
     link: () => {
-      const receiptQueryString = [
-        { key: "consumerCodes", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "applicationNumber") },
-        { key: "tenantId", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "tenantId") }
-      ]
-      download(receiptQueryString);
+      const { WaterConnection } = state.screenConfiguration.preparedFinalObject;
+      const appUserType = process.env.REACT_APP_NAME === "Citizen" ? "To Citizen" : "Department Use";
+      WaterConnection[0].appUserType = appUserType;
+      WaterConnection[0].commissionerName = "S.Ravindra Babu";
+      downloadApp(WaterConnection, 'sanctionLetter');
     },
     leftIcon: "receipt"
   };
-  let receiptPrintObject = {
-    label: { labelName: "Receipt", labelKey: "TL_RECEIPT" },
+  let sanctionPrintObject = {
+    label: { labelKey: "WS_SANCTION_LETTER" },
     link: () => {
-      const receiptQueryString = [
-        { key: "consumerCodes", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "applicationNumber") },
-        { key: "tenantId", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "tenantId") }
-      ]
-      download(receiptQueryString, "print");
+      const { WaterConnection } = state.screenConfiguration.preparedFinalObject;
+      const appUserType = process.env.REACT_APP_NAME === "Citizen" ? "Department Use" : "To Citizen";
+      WaterConnection[0].appUserType = appUserType;
+      WaterConnection[0].commissionerName = "S.Ravindra Babu";
+      downloadApp(WaterConnection, 'sanctionLetter', 'print');
     },
     leftIcon: "receipt"
   };
   let applicationDownloadObject = {
-    label: { labelName: "Application", labelKey: "TL_APPLICATION" },
+    label: { labelKey: "WS_APPLICATION" },
     link: () => {
-      const { Licenses, LicensesTemp } = state.screenConfiguration.preparedFinalObject;
-      const documents = LicensesTemp[0].reviewDocData;
-      set(Licenses[0], "additionalDetails.documents", documents)
-      downloadAcknowledgementForm(Licenses);
+      const { WaterConnection, DocumentsData } = state.screenConfiguration.preparedFinalObject;
+      let filteredDocs = DocumentsData;
+      filteredDocs.map((val) => {
+        if (val.title.includes("WS_OWNER.IDENTITYPROOF.")) {
+          val.title = "WS_OWNER.IDENTITYPROOF";
+        } else if (val.title.includes("WS_OWNER.ADDRESSPROOF.")) {
+          val.title = "WS_OWNER.ADDRESSPROOF";
+        }
+      });
+      WaterConnection[0].pdfDocuments = filteredDocs;
+      downloadApp(WaterConnection, 'application');
     },
     leftIcon: "assignment"
   };
   let applicationPrintObject = {
-    label: { labelName: "Application", labelKey: "TL_APPLICATION" },
+    label: { labelName: "Application", labelKey: "WS_APPLICATION" },
     link: () => {
-      const { Licenses, LicensesTemp } = state.screenConfiguration.preparedFinalObject;
-      const documents = LicensesTemp[0].reviewDocData;
-      set(Licenses[0], "additionalDetails.documents", documents)
-      downloadAcknowledgementForm(Licenses, 'print');
+      const { WaterConnection, DocumentsData } = state.screenConfiguration.preparedFinalObject;
+      let filteredDocs = DocumentsData;
+      filteredDocs.map((val) => {
+        if (val.title.includes("WS_OWNER.IDENTITYPROOF.")) {
+          val.title = "WS_OWNER.IDENTITYPROOF";
+        } else if (val.title.includes("WS_OWNER.ADDRESSPROOF.")) {
+          val.title = "WS_OWNER.ADDRESSPROOF";
+        }
+      });
+      WaterConnection[0].pdfDocuments = filteredDocs;
+      downloadApp(WaterConnection, 'application', 'print');
     },
     leftIcon: "assignment"
   };
-  switch (status) {
-    case "APPROVED":
-      downloadMenu = [
-        tlCertificateDownloadObject,
-        receiptDownloadObject,
-        applicationDownloadObject
-      ];
-      printMenu = [
-        tlCertificatePrintObject,
-        receiptPrintObject,
-        applicationPrintObject
-      ];
-      break;
-    case "APPLIED":
-    case "CITIZENACTIONREQUIRED":
-    case "FIELDINSPECTION":
-    case "PENDINGAPPROVAL":
-    case "PENDINGPAYMENT":
+  switch (appStatus) {
+    case "PENDING_FOR_DOCUMENT_VERIFICATION":
+    case "PENDING_FOR_CITIZEN_ACTION":
+    case "PENDING_FOR_FIELD_INSPECTION":
       downloadMenu = [applicationDownloadObject];
       printMenu = [applicationPrintObject];
       break;
-    case "CANCELLED":
-      downloadMenu = [applicationDownloadObject];
-      printMenu = [applicationPrintObject];
+    case "PENDING_APPROVAL_FOR_CONNECTION":
+      downloadMenu = [applicationDownloadObject, wsEstimateDownloadObject];
+      printMenu = [applicationPrintObject, wsEstimatePrintObject];
+      break;
+    case "PENDING_FOR_PAYMENT":
+    case "PENDING_FOR_CONNECTION_ACTIVATION":
+    case "CONNECTION_ACTIVATED":
+      downloadMenu = [sanctionDownloadObject, wsEstimateDownloadObject, applicationDownloadObject];
+      printMenu = [sanctionPrintObject, wsEstimatePrintObject, applicationPrintObject];
       break;
     case "REJECTED":
       downloadMenu = [applicationDownloadObject];
       printMenu = [applicationPrintObject];
       break;
-    default:
+    default: downloadMenu = [applicationDownloadObject];
+      printMenu = [applicationPrintObject];
       break;
   }
   /** END */
@@ -608,7 +616,7 @@ export const downloadPrintContainer = (
               label: { labelName: "PRINT", labelKey: "WS_COMMON_BUTTON_PRINT" },
               leftIcon: "print",
               rightIcon: "arrow_drop_down",
-              props: { variant: "outlined", style: { height: "60px", color: "#FE7A51",marginLeft:"15px" }, className: "tl-print-button" },
+              props: { variant: "outlined", style: { height: "60px", color: "#FE7A51", marginLeft: "15px" }, className: "tl-print-button" },
               menu: printMenu
             }
           }
@@ -623,6 +631,43 @@ export const downloadPrintContainer = (
   }
 };
 
+const fetchData = async (dispatch) => {
+  const applicationNumber = getQueryArg(window.location.href, "applicationNumber");
+  const applicationNumberWater = getQueryArg(window.location.href, "applicationNumberWater");
+  const applicationNumberSewerage = getQueryArg(window.location.href, "applicationNumberSewerage");
+  const tenantId = getQueryArg(window.location.href, "tenantId");
+  if (applicationNumberSewerage && applicationNumberWater) {
+    await getWaterData(dispatch, applicationNumberWater, tenantId);
+    await getSewerageData(dispatch, applicationNumberSewerage, tenantId);
+  } else if (applicationNumber) {
+    if (applicationNumber.includes("WS")) {
+      await getWaterData(dispatch, applicationNumber, tenantId);
+    } else if (applicationNumber.includes("SW")) {
+      await getSewerageData(dispatch, applicationNumber, tenantId);
+    }
+  }
+}
+
+const getWaterData = async (dispatch, applicationNumber, tenantId) => {
+  let waterResponse = [];
+  let queryObject = [{ key: "tenantId", value: tenantId }, { key: "applicationNumber", value: applicationNumber }];
+  try { waterResponse = await getSearchResults(queryObject); } catch (error) { console.log(error); waterResponse = [] };
+  if (waterResponse && waterResponse.WaterConnection !== undefined && waterResponse.WaterConnection.length > 0) {
+    waterResponse.WaterConnection[0].service = "WATER";
+    dispatch(prepareFinalObject("WaterConnection", findAndReplace(waterResponse.WaterConnection, "NA", null)));
+  } else { dispatch(prepareFinalObject("WaterConnection", [])); }
+}
+
+const getSewerageData = async (dispatch, applicationNumber, tenantId) => {
+  let sewerResponse = [];
+  let queryObject = [{ key: "tenantId", value: tenantId }, { key: "applicationNumber", value: applicationNumber }];
+  try { sewerResponse = await getSearchResultsForSewerage(queryObject, dispatch) } catch (error) { console.log(error); sewerResponse = [] };
+  if (sewerResponse && sewerResponse.SewerageConnections !== undefined && sewerResponse.SewerageConnections.length > 0) {
+    sewerResponse.SewerageConnections[0].service = "SEWERAGE";
+    dispatch(prepareFinalObject("SewerageConnection", findAndReplace(sewerResponse.SewerageConnections, "NA", null)));
+  } else { dispatch(prepareFinalObject("SewerageConnection", [])); }
+}
+
 const screenConfig = {
   uiFramework: "material-ui",
   name: "acknowledgement",
@@ -636,6 +681,7 @@ const screenConfig = {
     }
   },
   beforeInitScreen: (action, state, dispatch) => {
+    fetchData(dispatch);
     const purpose = getQueryArg(window.location.href, "purpose");
     const status = getQueryArg(window.location.href, "status");
     // const service = getQueryArg(window.location.href, "service");

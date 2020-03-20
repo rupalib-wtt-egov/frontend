@@ -16,7 +16,10 @@ import {
   pushTheDocsUploadedToRedux,
   findAndReplace,
   applyForSewerage,
-  applyForWater
+  applyForWater,
+  validateFeildsForBothWaterAndSewerage,
+  validateFeildsForWater,
+  validateFeildsForSewerage
 } from "../../../../../ui-utils/commons";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import set from 'lodash/set';
@@ -134,70 +137,44 @@ const callBackForNext = async (state, dispatch) => {
         "applyScreen.sewerage"
       );
       let applyScreenObject = get(state.screenConfiguration.preparedFinalObject, "applyScreen");
-      if (applyScreenObject.hasOwnProperty("property") && applyScreenObject['property'] !== undefined && applyScreenObject["property"] !== "") {
-        if (water && sewerage) {
-          if (
-            (applyScreenObject.hasOwnProperty("property") && applyScreenObject['property'] !== undefined && applyScreenObject["property"] !== "") &&
-            (applyScreenObject.hasOwnProperty("water") && applyScreenObject["water"] !== undefined && applyScreenObject["water"] !== "") &&
-            (applyScreenObject.hasOwnProperty("sewerage") && applyScreenObject["sewerage"] !== undefined && applyScreenObject["sewerage"] !== "") &&
-            (applyScreenObject.hasOwnProperty("proposedTaps") && applyScreenObject["proposedTaps"] !== undefined && applyScreenObject["proposedTaps"] !== "") &&
-            (applyScreenObject.hasOwnProperty("proposedPipeSize") && applyScreenObject["proposedPipeSize"] !== undefined && applyScreenObject["proposedPipeSize"] !== "") &&
-            (applyScreenObject.hasOwnProperty("proposedWaterClosets") && applyScreenObject["proposedWaterClosets"] !== undefined && applyScreenObject["proposedWaterClosets"] !== "") &&
-            (applyScreenObject.hasOwnProperty("proposedToilets") && applyScreenObject["proposedToilets"] !== undefined && applyScreenObject["proposedToilets"] !== "")
-          ) {
-            isFormValid = true;
-            hasFieldToaster = false;
+      if (applyScreenObject.water || applyScreenObject.sewerage) {
+        if (applyScreenObject.hasOwnProperty("property") && applyScreenObject['property'] !== undefined && applyScreenObject["property"] !== "") {
+          if (water && sewerage) {
+            if (validateFeildsForBothWaterAndSewerage(applyScreenObject)) { isFormValid = true; hasFieldToaster = false; }
+            else { isFormValid = false; hasFieldToaster = true; }
+          } else if (water) {
+            if (validateFeildsForWater(applyScreenObject)) { isFormValid = true; hasFieldToaster = false; }
+            else { isFormValid = false; hasFieldToaster = true; }
           } else {
-            isFormValid = false;
-            hasFieldToaster = true;
-          }
-        } else if (water) {
-          if (
-            (applyScreenObject.hasOwnProperty("property") && applyScreenObject['property'] !== undefined && applyScreenObject["property"] !== "") &&
-            (applyScreenObject.hasOwnProperty("water") && applyScreenObject["water"] !== undefined && applyScreenObject["water"] !== "") &&
-            (applyScreenObject.hasOwnProperty("sewerage") && applyScreenObject["sewerage"] !== undefined && applyScreenObject["sewerage"] !== "") &&
-            (applyScreenObject.hasOwnProperty("proposedTaps") && applyScreenObject["proposedTaps"] !== undefined && applyScreenObject["proposedTaps"] !== "") &&
-            (applyScreenObject.hasOwnProperty("proposedPipeSize") && applyScreenObject["proposedPipeSize"] !== undefined && applyScreenObject["proposedPipeSize"] !== "")
-          ) {
-            isFormValid = true;
-            hasFieldToaster = false;
-          } else {
-            isFormValid = false;
-            hasFieldToaster = true;
+            if (validateFeildsForSewerage(applyScreenObject)) { isFormValid = true; hasFieldToaster = false; }
+            else { isFormValid = false; hasFieldToaster = true; }
           }
         } else {
-          if (
-            (applyScreenObject.hasOwnProperty("property") && applyScreenObject['property'] !== undefined && applyScreenObject["property"] !== "") &&
-            (applyScreenObject.hasOwnProperty("water") && applyScreenObject["water"] !== undefined && applyScreenObject["water"] !== "") &&
-            (applyScreenObject.hasOwnProperty("sewerage") && applyScreenObject["sewerage"] !== undefined && applyScreenObject["sewerage"] !== "") &&
-            (applyScreenObject.hasOwnProperty("proposedWaterClosets") && applyScreenObject["proposedWaterClosets"] !== undefined && applyScreenObject["proposedWaterClosets"] !== "") &&
-            (applyScreenObject.hasOwnProperty("proposedToilets") && applyScreenObject["proposedToilets"] !== undefined && applyScreenObject["proposedToilets"] !== "")
-          ) {
-            isFormValid = true;
-            hasFieldToaster = false;
-          } else {
-            isFormValid = false;
-            hasFieldToaster = true;
+          isFormValid = false;
+          dispatch(toggleSnackbar(true, { labelKey: "WS_UPDATE_PROPERTY_INFO_AT_ULB" }, "warning"))
+        }
+        let waterData = get(state, "screenConfiguration.preparedFinalObject.WaterConnection");
+        let sewerData = get(state, "screenConfiguration.preparedFinalObject.SewerageConnection")
+        let waterChecked = get(state, "screenConfiguration.preparedFinalObject.applyScreen.water");
+        let sewerChecked = get(state, "screenConfiguration.preparedFinalObject.applyScreen.sewerage")
+        if (isFormValid) {
+          if ((waterData && waterData.length > 0) || (sewerData && sewerData.length > 0)) {
+            if (waterChecked && sewerChecked) {
+              if (sewerData && sewerData.length > 0 && waterData.length === 0) { await applyForWater(state, dispatch); }
+              else if (waterData && waterData.length > 0 && sewerData.length === 0) { await applyForSewerage(state, dispatch); }
+            } else if (sewerChecked && sewerData.length === 0) { await applyForSewerage(state, dispatch); }
+            else if (waterChecked && waterData.length === 0) { await applyForWater(state, dispatch); }
+          } else if (waterChecked && sewerChecked) {
+            if (waterData.length === 0 && sewerData.length === 0) { isFormValid = await applyForWaterOrSewerage(state, dispatch); }
+          } else if (waterChecked) {
+            if (waterData.length === 0) { isFormValid = await applyForWaterOrSewerage(state, dispatch); }
+          } else if (sewerChecked) {
+            if (sewerData.length === 0) { isFormValid = await applyForWaterOrSewerage(state, dispatch); }
           }
         }
       } else {
         isFormValid = false;
-        dispatch(toggleSnackbar(true, { labelKey: "WS_UPDATE_PROPERTY_INFO_AT_ULB" }, "warning"))
-      }
-      let waterData = get(state, "screenConfiguration.preparedFinalObject.WaterConnection");
-      let sewerData = get(state, "screenConfiguration.preparedFinalObject.SewerageConnection")
-      let waterChecked = get(state, "screenConfiguration.preparedFinalObject.applyScreen.water");
-      let sewerChecked = get(state, "screenConfiguration.preparedFinalObject.applyScreen.sewerage")
-      if (isFormValid) {
-        if ((waterData && waterData.length > 0) || (sewerData && sewerData.length > 0)) {
-          if (waterChecked && sewerChecked) {
-            if (sewerData && sewerData.length > 0) { await applyForWater(state, dispatch); }
-            if (waterData && waterData.length > 0) { await applyForSewerage(state, dispatch); }
-          } else if (sewerChecked) { await applyForSewerage(state, dispatch); }
-          else { await applyForWater(state, dispatch); }
-        } else {
-          isFormValid = await applyForWaterOrSewerage(state, dispatch);
-        }
+        hasFieldToaster = true;
       }
     }
     prepareDocumentsUploadData(state, dispatch);
@@ -422,6 +399,7 @@ export const changeStep = (
   mode = "next",
   defaultActiveStep = -1
 ) => {
+  window.scrollTo(0, 0);
   let activeStep = get(state.screenConfiguration.screenConfig["apply"], "components.div.children.stepper.props.activeStep", 0);
   if (defaultActiveStep === -1) {
     if (activeStep === 1 && mode === "next") {
@@ -741,6 +719,7 @@ export const getActionDefinationForStepper = path => {
 };
 
 export const callBackForPrevious = (state, dispatch) => {
+  window.scrollTo(0, 0);
   changeStep(state, dispatch, "previous");
 };
 

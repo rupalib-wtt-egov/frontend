@@ -1192,7 +1192,7 @@ class FormWizard extends Component {
           propertyId = pty.propertyId;
           tenantId = pty.tenantId;
         }
-        this.props.history.push(`./../egov-common/pay?consumerCode=${propertyId}&tenantId=${tenantId}`
+        this.props.history.push(`./../egov-common/pay?consumerCode=${propertyId}&tenantId=${tenantId}&businessService=PT`
         )
         break;
       case 6:
@@ -1690,6 +1690,7 @@ class FormWizard extends Component {
       this.setState({
         termsError: "PT_CHECK_DECLARATION_BOX"
       });
+      window.scrollTo(0, document.body.scrollHeight || document.documentElement.scrollHeight);
       alert("Please check the declaration box to proceed futher");
       return;
     }

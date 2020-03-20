@@ -5,7 +5,7 @@ import {
   getCommonHeader,
   getStepperObject
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { getCurrentFinancialYear } from "../utils";
+import { getCurrentFinancialYear, showHideMutationDetailsCard } from "../utils";
 import { footer } from "./applyResource/footer";
 import {mutationDetails
    } from "./applyResourceMutation/mutationDetails";
@@ -187,6 +187,9 @@ const getPropertyData = async (action, state, dispatch) => {
     
     let owners = [];
     payload.Properties[0].owners.map(owner => {
+      owner.documentUid= owner.documents? owner.documents[0].documentUid: "NA";
+      owner.documentType=owner.documents? owner.documents[0].documentType: "NA";
+      
       if (owner.status == "ACTIVE") {
         owners.push(owner);
       } 
@@ -196,6 +199,8 @@ const getPropertyData = async (action, state, dispatch) => {
     payload.Properties[0].ownersInit = owners;
     payload.Properties[0].ownershipCategoryInit=payload.Properties[0].ownershipCategory;
   }
+  const previousPropertyUuid=payload.Properties[0].additionalDetails&&payload.Properties[0].additionalDetails.previousPropertyUuid;
+  payload.Properties[0].additionalDetails={previousPropertyUuid};
     dispatch(prepareFinalObject("Property", payload.Properties[0]));
 
     if (
@@ -274,7 +279,7 @@ const getSpecialCategoryDocumentTypeMDMSData=async (action, state, dispatch) => 
       moduleDetails: [
         {
           moduleName: "PropertyTax",
-          masterDetails: [{ name: "OwnerTypeDocument" }]
+          masterDetails: [{ name: "OwnerTypeDocument" }, {name: "PropertyConfiguration"}]
         }
       ]
     }
@@ -293,7 +298,10 @@ const getSpecialCategoryDocumentTypeMDMSData=async (action, state, dispatch) => 
       payload,
       "MdmsRes.PropertyTax.OwnerTypeDocument"
     )
+    let propertyConfiguation = get(payload, "MdmsRes.PropertyTax.PropertyConfiguration");
     dispatch(prepareFinalObject("applyScreenMdmsData.OwnerTypeDocument", OwnerTypeDocument));
+    dispatch(prepareFinalObject("PropertyConfiguration", propertyConfiguation));
+    showHideMutationDetailsCard(action, state, dispatch);
   } catch (e) {
     console.log(e);
   }
@@ -612,67 +620,6 @@ getSpecialCategoryDocumentTypeMDMSData(action, state, dispatch);
         { visibility: "hidden" }
       );
     }
-
-
-
-
-    // if (
-    //   get(
-    //     state,
-    //     "screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.applicantDetails.ownerShipType",
-    //     ""
-    //   ).includes("MULTIPLEOWNERS")
-    // ) {
-    //   set(
-    //     action.screenConfig,
-    //     "components.div.children.formwizardThirdStep.children.applicantDetails.children.cardContent.children.applicantTypeContainer.children.singleApplicantContainer.props.style",
-    //     { display: "none" }
-    //   );
-    //   set(
-    //     action.screenConfig,
-    //     "components.div.children.formwizardThirdStep.children.applicantDetails.children.cardContent.children.applicantTypeContainer.children.multipleApplicantContainer.props.style",
-    //     {}
-    //   );
-    // } else if (
-    //   get(
-    //     state,
-    //     "screenConfiguration.preparedFinalObject.Properties[0].ownershipCategory",
-    //     ""
-    //   ).includes("INSTITUTIONAL")
-    // ) {
-    //   set(
-    //     action.screenConfig,
-    //     "components.div.children.formwizardFirstStep.children.transferorDetails.props.style",
-    //     { display: "none" }
-    //   );
-    //   set(
-    //     action.screenConfig,
-    //     "components.div.children.formwizardFirstStep.children.transferorDetails.props.style",
-    //     { display: "none" }
-    //   );
-    //   set(
-    //     action.screenConfig,
-    //     "components.div.children.formwizardFirstStep.children.transferorDetails.props.style",
-    //     { display: "none" }
-    //   );
-    //   set(
-    //     action.screenConfig,
-    //     "components.div.children.formwizardThirdStep.children.summary.children.cardContent.children.transferorInstitutionSummary.props.style",
-    //     {}
-    //   );
-    //   set(
-    //     action.screenConfig,
-    //     "components.div.children.formwizardThirdStep.children.applicantDetails.children.cardContent.children.applicantTypeContainer.children.applicantSubType.props.style",
-    //     {}
-    //   );
-    // }else{
-    //   set(
-    //     action.screenConfig,
-    //     "components.div.children.formwizardThirdStep.children.summary.children.cardContent.children.transferorInstitutionSummary.props.style",
-    //     { display: "none" }
-    //   );
-    // }
-
 
     set(
       action.screenConfig,

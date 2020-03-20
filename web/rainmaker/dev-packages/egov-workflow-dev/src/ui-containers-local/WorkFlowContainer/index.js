@@ -119,8 +119,10 @@ class WorkFlowContainer extends React.Component {
         return "purpose=sendback&status=success";
       case "APPROVE_FOR_CONNECTION":
         return "purpose=approve&status=success";
-        case "ACTIVATE_CONNECTION":
+      case "ACTIVATE_CONNECTION":
         return "purpose=activate&status=success";
+      case "REVOCATE":
+        return "purpose=application&status=revocated"
     }
   };
 
@@ -204,8 +206,10 @@ class WorkFlowContainer extends React.Component {
       data.processInstance = {
         documents: data.wfDocuments,
         assignes: data.assignees,
-        comment: data.comment
+        comment: data.comment,
+        action: data.action
       }
+      data.waterSource = data.waterSource + "." + data.waterSubSource;
     }
 
     if (moduleName === "NewSW1") {
@@ -314,7 +318,6 @@ class WorkFlowContainer extends React.Component {
   };
 
   getRedirectUrl = (action, businessId, moduleName) => {
-    console.log("modulenamewater", moduleName);
     const isAlreadyEdited = getQueryArg(window.location.href, "edited");
     const tenant = getQueryArg(window.location.href, "tenantId");
     const { ProcessInstances } = this.props;
@@ -339,10 +342,14 @@ class WorkFlowContainer extends React.Component {
         bservice="WS.ONE_TIME_FEE"
       }else{
         bservice="SW.ONE_TIME_FEE"
-      }
-      
-    } else {
+      } 
+    } else if(moduleName === "PT"){
+       bservice="PT"
+    } else if(moduleName === "PT.MUTATION"){
+       bservice="PT.MUTATION"
+    }else {
       baseUrl = process.env.REACT_APP_NAME==="Citizen" ? "tradelicense-citizen" : "tradelicence";
+      bservice="TL"
     }
     const payUrl = `/egov-common/pay?consumerCode=${businessId}&tenantId=${tenant}`;
     switch (action) {
@@ -466,7 +473,7 @@ class WorkFlowContainer extends React.Component {
         isLast: item.action === "PAY" ? true : false,
         buttonUrl: getRedirectUrl(item.action, businessId, businessService),
         dialogHeader: getHeaderName(item.action),
-        showEmployeeList: !checkIfTerminatedState(item.nextState, businessService) && item.action !== "SENDBACKTOCITIZEN",
+        showEmployeeList:(businessService==="NewWS1"||businessService==="NewSW1")?!checkIfTerminatedState(item.nextState, businessService) && item.action !== "SEND_BACK_TO_CITIZEN" && item.action !=="RESUBMIT_APPLICATION":!checkIfTerminatedState(item.nextState, businessService)&&item.action !== "SENDBACKTOCITIZEN",
         roles: getEmployeeRoles(item.nextState, item.currentState, businessService),
         isDocRequired: checkIfDocumentRequired(item.nextState, businessService)
       };
