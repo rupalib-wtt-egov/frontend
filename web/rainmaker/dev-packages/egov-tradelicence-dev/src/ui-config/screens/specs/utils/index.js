@@ -1824,109 +1824,190 @@ export const updateDropDowns = async (
   setOwnerShipDropDownFieldChange(state, dispatch, payload);
 };
 
-const updatedDoc =[
+//doc changes
+const Documents = [
   {
-    "applicationType": "NEW",
-
-    "documentList": [
-      {
-        name : "OWNERIDPROOF",
-        required: true,
-        description: {
-          labelName: "Only .jpg and .pdf files. 6MB max file size.",
-          labelKey: "TL_UPLOAD_RESTRICTIONS"
-        },
-        formatProps :{
-          accept : "image/*, .pdf, .png, .jpeg",
-        }, 
-        maxFileSize: 6000,
-        statement: "TL_OWNERIDPROOF_NOTE"
-      },
-      {
-        name : "OWNERSHIPPROOF",
-        required: true,
-        description: {
-          labelName: "Only .jpg and .pdf files. 6MB max file size.",
-          labelKey: "TL_UPLOAD_RESTRICTIONS"
-        },
-        formatProps :{
-          accept : "image/*, .pdf, .png, .jpeg",
-        },        
-        maxFileSize: 6000,
-        statement: "TL_OWNERSHIPPROOF_NOTE"
-      },
-      {
-        name : "OWNERPHOTO",
-        required: true,
-        description: {
-          labelName: "Only .png and .jpeg 6MB max file size.",
-          labelKey: "TL_UPLOAD_IMAGE_RESTRICTIONS"
-        },
-        formatProps :{
-          accept: "image/*, .png, .jpeg",
-        },        
-        maxFileSize: 3000,
-        statement: "TL_OWNERPHOTO_NOTE"
-      }
-    ]
+    applicationType : "NEW",
+    code : "OWNERIDPROOF",
   },
   {
-    "applicationType": "RENEWAL",
-    "documentList": [
-      {
-        name : "OWNERIDPROOF",
-        required: true,
-        description: {
-          labelName: "Only .jpg and .pdf files. 6MB max file size.",
-          labelKey: "TL_UPLOAD_RESTRICTIONS"
-        },
-        formatProps :{
-          accept : "image/*, .pdf, .png, .jpeg",
-        }, 
-        maxFileSize: 6000,
-        statement: "TL_OWNERIDPROOF_NOTE"
-      },
-      {
-        name : "OWNERSHIPPROOF",
-        required: true,
-        description: {
-          labelName: "Only .jpg and .pdf files. 6MB max file size.",
-          labelKey: "TL_UPLOAD_RESTRICTIONS"
-        },
-        formatProps :{
-          accept : "image/*, .pdf, .png, .jpeg",
-        },        
-        maxFileSize: 6000,
-        statement: "TL_OWNERSHIPPROOF_NOTE"
-      },
-      {
-        name : "OWNERPHOTO",
-        required: true,
-        description: {
-          labelName: "Only .png and .jpeg 6MB max file size.",
-          labelKey: "TL_UPLOAD_IMAGE_RESTRICTIONS"
-        },
-        formatProps :{
-          accept: "image/*, .png, .jpeg",
-        },        
-        maxFileSize: 3000,
-        statement: "TL_OWNERPHOTO_NOTE"
-      },
-      {
-        name : "OLDLICENCENO",
-        description: {
-          labelName: "Only .jpg and .pdf files. 6MB max file size.",
-          labelKey: "TL_UPLOAD_RESTRICTIONS"
-        },
-        formatProps :{
-          accept : "image/*, .pdf, .png, .jpeg",
-        },  
-        maxFileSize: 6000,      
-        statement: "TL_OLDLICENCENO_NOTE"    
-      },
-    ]
-  }
+    applicationType : "NEW",
+    code : "OWNERSHIPPROOF",
+  },
+  {
+    applicationType : "NEW",
+    code : "OWNERPHOTO",
+  },
+  {
+    applicationType : "RENEWAL",
+    code : "OLDLICENCENO",
+  },
+
 ]
+
+
+const documentList =  [
+  {
+    name : "OWNERIDPROOF",
+    applicationType: "NEW",
+    required: true,
+    description: {
+      labelName: "Only .jpg and .pdf files. 6MB max file size.",
+      labelKey: "TL_UPLOAD_RESTRICTIONS"
+    },
+    formatProps :{
+      accept : "image/*, .pdf, .png, .jpeg",
+    }, 
+    maxFileSize: 6000,
+    statement: "TL_OWNERIDPROOF_NOTE"
+  },
+  {
+    name : "OWNERSHIPPROOF",
+    applicationType: "NEW",
+    required: true,
+    description: {
+      labelName: "Only .jpg and .pdf files. 6MB max file size.",
+      labelKey: "TL_UPLOAD_RESTRICTIONS"
+    },
+    formatProps :{
+      accept : "image/*, .pdf, .png, .jpeg",
+    },        
+    maxFileSize: 6000,
+    statement: "TL_OWNERSHIPPROOF_NOTE"
+  },
+  {
+    name : "OWNERPHOTO",
+    applicationType: "NEW",
+    required: true,
+    description: {
+      labelName: "Only .png and .jpeg 6MB max file size.",
+      labelKey: "TL_UPLOAD_IMAGE_RESTRICTIONS"
+    },
+    formatProps :{
+      accept: "image/*, .png, .jpeg",
+    },        
+    maxFileSize: 3000,
+    statement: "TL_OWNERPHOTO_NOTE"
+  },
+  {
+    name : "OLDLICENCENO",
+    applicationType: "RENEWAL",
+    description: {
+      labelName: "Only .jpg and .pdf files. 6MB max file size.",
+      labelKey: "TL_UPLOAD_RESTRICTIONS"
+    },
+    formatProps :{
+      accept : "image/*, .pdf, .png, .jpeg",
+    },  
+    maxFileSize: 6000,      
+    statement: "TL_OLDLICENCENO_NOTE"    
+  },
+]
+
+
+// const updatedDoc =[
+//   {
+//     "applicationType": "NEW",
+
+//     "documentList": [
+//       {
+//         name : "OWNERIDPROOF",
+//         required: true,
+//         description: {
+//           labelName: "Only .jpg and .pdf files. 6MB max file size.",
+//           labelKey: "TL_UPLOAD_RESTRICTIONS"
+//         },
+//         formatProps :{
+//           accept : "image/*, .pdf, .png, .jpeg",
+//         }, 
+//         maxFileSize: 6000,
+//         statement: "TL_OWNERIDPROOF_NOTE"
+//       },
+//       {
+//         name : "OWNERSHIPPROOF",
+//         required: true,
+//         description: {
+//           labelName: "Only .jpg and .pdf files. 6MB max file size.",
+//           labelKey: "TL_UPLOAD_RESTRICTIONS"
+//         },
+//         formatProps :{
+//           accept : "image/*, .pdf, .png, .jpeg",
+//         },        
+//         maxFileSize: 6000,
+//         statement: "TL_OWNERSHIPPROOF_NOTE"
+//       },
+//       {
+//         name : "OWNERPHOTO",
+//         required: true,
+//         description: {
+//           labelName: "Only .png and .jpeg 6MB max file size.",
+//           labelKey: "TL_UPLOAD_IMAGE_RESTRICTIONS"
+//         },
+//         formatProps :{
+//           accept: "image/*, .png, .jpeg",
+//         },        
+//         maxFileSize: 3000,
+//         statement: "TL_OWNERPHOTO_NOTE"
+//       }
+//     ]
+//   },
+//   {
+//     "applicationType": "RENEWAL",
+//     "documentList": [
+//       {
+//         name : "OWNERIDPROOF",
+//         required: true,
+//         description: {
+//           labelName: "Only .jpg and .pdf files. 6MB max file size.",
+//           labelKey: "TL_UPLOAD_RESTRICTIONS"
+//         },
+//         formatProps :{
+//           accept : "image/*, .pdf, .png, .jpeg",
+//         }, 
+//         maxFileSize: 6000,
+//         statement: "TL_OWNERIDPROOF_NOTE"
+//       },
+//       {
+//         name : "OWNERSHIPPROOF",
+//         required: true,
+//         description: {
+//           labelName: "Only .jpg and .pdf files. 6MB max file size.",
+//           labelKey: "TL_UPLOAD_RESTRICTIONS"
+//         },
+//         formatProps :{
+//           accept : "image/*, .pdf, .png, .jpeg",
+//         },        
+//         maxFileSize: 6000,
+//         statement: "TL_OWNERSHIPPROOF_NOTE"
+//       },
+//       {
+//         name : "OWNERPHOTO",
+//         required: true,
+//         description: {
+//           labelName: "Only .png and .jpeg 6MB max file size.",
+//           labelKey: "TL_UPLOAD_IMAGE_RESTRICTIONS"
+//         },
+//         formatProps :{
+//           accept: "image/*, .png, .jpeg",
+//         },        
+//         maxFileSize: 3000,
+//         statement: "TL_OWNERPHOTO_NOTE"
+//       },
+//       {
+//         name : "OLDLICENCENO",
+//         description: {
+//           labelName: "Only .jpg and .pdf files. 6MB max file size.",
+//           labelKey: "TL_UPLOAD_RESTRICTIONS"
+//         },
+//         formatProps :{
+//           accept : "image/*, .pdf, .png, .jpeg",
+//         },  
+//         maxFileSize: 6000,      
+//         statement: "TL_OLDLICENCENO_NOTE"    
+//       },
+//     ]
+//   }
+// ]
 
 export const getDocList = (state, dispatch) => {
   const tradeSubTypes = get(
@@ -1951,8 +2032,10 @@ export const getDocList = (state, dispatch) => {
   
   let applicationDocArray = [];
   selectedTypes && selectedTypes.forEach(tradeSubTypeDoc => {
+  const newAppDocuments =  documentList.filter(item => item.applicationType === "NEW");
+  const renewalAppDocuments =  documentList.filter(item => item.applicationType === "NEW" && item.applicationType === "RENEWAL");
   // const  applicationarrayTemp= getQueryArg(window.location.href , "action") === "EDITRENEWAL" || applicationType==="RENEWAL" ? tradeSubTypeDoc[0].applicationDocument.filter(item => item.applicationType === "RENEWAL")[0].documentList : tradeSubTypeDoc[0].applicationDocument.filter(item => item.applicationType === "NEW")[0].documentList;
-  const  applicationarrayTemp= getQueryArg(window.location.href , "action") === "EDITRENEWAL" || applicationType==="RENEWAL" ? updatedDoc.filter(item => item.applicationType === "RENEWAL")[0].documentList : updatedDoc.filter(item => item.applicationType === "NEW")[0].documentList;
+  const  applicationarrayTemp= getQueryArg(window.location.href , "action") === "EDITRENEWAL" || applicationType==="RENEWAL" ? renewalAppDocuments : newAppDocuments;
     applicationDocArray = [
       ...applicationDocArray,
       ...applicationarrayTemp 
