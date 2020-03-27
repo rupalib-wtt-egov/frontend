@@ -179,22 +179,37 @@ export const createUpdateBpaApplication = async (state, dispatch, status) => {
   if (documnts && documnts.length > 0) {
     documnts.forEach(documents => {
     if(documents && documents.documents){
-      let doc = {};
-      if(documents.dropDownValues) {
-      doc.documentType = documents.dropDownValues.value;
-      }
-      doc.fileStoreId = documents.documents[0].fileStoreId;
-      doc.fileStore = documents.documents[0].fileStoreId;
-      doc.fileName = documents.documents[0].fileName;
-      doc.fileUrl = documents.documents[0].fileUrl;
-      if(doc.id) {
-        doc.id = documents.documents[0].id;
-      }
-      requiredDocuments.push(doc);
+      documents.documents.forEach(docItem =>{
+        let doc = {};
+        if(documents.dropDownValues) {
+        doc.documentType = documents.dropDownValues.value;
+        }
+        doc.fileStoreId = docItem.fileStoreId;
+        doc.fileStore = docItem.fileStoreId;
+        doc.fileName = docItem.fileName;
+        doc.fileUrl = docItem.fileUrl;
+        if(doc.id) {
+          doc.id = docItem.id;
+        }
+        requiredDocuments.push(doc);
+      })
     }
   })
 }
 
+  let uploadeDocumnts = [];
+  if (documentsUpdalod) {
+    Object.keys(documentsUpdalod).forEach(function(key) {
+      uploadeDocumnts.push(documentsUpdalod[key])
+    });
+  }
+  if (uploadeDocumnts && uploadeDocumnts.length > 0) {
+    uploadeDocumnts.forEach(upDoc => {
+      let value;
+      if (upDoc && upDoc.dropDownValues && upDoc.dropDownValues.value)
+        value = upDoc.dropDownValues.value;
+    })
+  }
   let comparingPreviuosDoc = [];
   let BPAUploadeddocuments = get(
     state.screenConfiguration.preparedFinalObject,
@@ -207,7 +222,7 @@ export const createUpdateBpaApplication = async (state, dispatch, status) => {
     BPAUploadeddocuments.forEach(upDoc => {
       requiredDocuments.forEach(doc => {
         if(upDoc && doc && upDoc.documentType && doc.documentType && upDoc.documentType === doc.documentType) {
-          doc.id = upDoc.id;
+          // doc.id = upDoc.id;
           bpaComparingDocuments.push(doc);
         }
       })
@@ -360,7 +375,12 @@ export const prepareDocumentsUploadData = (state, dispatch) => {
     let card = {};
     card["name"] = doc.code;
     card["code"] = doc.code;
-    card["required"] = doc.required ? true : false;
+    if(bpaDetails && bpaDetails.documents && bpaDetails.documents.length > 0) {
+      card["required"] = false;
+    }
+    else {
+    card["required"] = doc.required ? true : false;      
+    };
     if (doc.hasDropdown && doc.dropDownValues) {
       let dropDownValues = {};
       dropDownValues.label = "Select Documents";
@@ -521,6 +541,9 @@ const setDocsForEditFlow = async (state, dispatch) => {
     });
   dispatch(
     prepareFinalObject("LicensesTemp[0].uploadedDocsInRedux", uploadedDocuments)
+  );
+  dispatch(
+    prepareFinalObject("LicensesTemp[0].isDocsEdit", true)
   );
 };
 
@@ -721,14 +744,59 @@ export const applyTradeLicense = async (state, dispatch, activeIndex) => {
       //   getMultipleOwners(owners)
       // );
       let action = "NOWORKFLOW";
-      if (
-        queryObject[0].tradeLicenseDetail &&
-        queryObject[0].tradeLicenseDetail.applicationDocuments
-      ) {
-        if (activeIndex === 2) {
-          action = "APPLY";
+      // if (
+      //   queryObject[0].tradeLicenseDetail &&
+      //   queryObject[0].tradeLicenseDetail.applicationDocuments
+      // ) {
+      //   if (activeIndex === 2) {
+      //     action = "APPLY";
+      //   }
+      //   let docs = []; 
+      //   let bparegDocuments = queryObject[0].tradeLicenseDetail.applicationDocuments;
+      //  if(bparegDocuments && bparegDocuments.length > 0) {
+      //   bparegDocuments.forEach(doc => {
+      //     if(doc != null) docs.push(doc)
+      //   })
+      //   }
+      //   queryObject[0].tradeLicenseDetail.applicationDocuments = docs;
+      // }
+
+      let documentsUpdalod = get(
+        state,
+        "screenConfiguration.preparedFinalObject.bparegDocumentDetailsUploadRedux",
+        []
+      );
+    
+      let documnts = [];
+     if(documentsUpdalod) {
+      Object.keys(documentsUpdalod).forEach(function(key) {
+        documnts.push(documentsUpdalod[key])
+      });
+     }
+
+    //  documentType, tenantId
+      
+      let requiredDocuments = [];
+      if (documnts && documnts.length > 0) {
+        documnts.forEach(documents => {
+        if(documents && documents.documents){
+          let doc = {};
+          doc.fileStoreId = documents.documents[0].fileStoreId;
+          doc.fileStore = documents.documents[0].fileStoreId;
+          doc.fileName = documents.documents[0].fileName;
+          doc.fileUrl = documents.documents[0].fileUrl;
+          doc.documentType = documents.documentCode;
+          doc.tenantId = tenantId;
+          if(documents.documents[0].id) {
+            doc.id = documents.documents[0].id;
+          }
+          requiredDocuments.push(doc);
         }
-      }
+      })
+    }
+    if(requiredDocuments && requiredDocuments.length) {
+      queryObject[0].tradeLicenseDetail.applicationDocuments = requiredDocuments;
+    }
       // else if (
       //   queryObject[0].tradeLicenseDetail &&
       //   queryObject[0].tradeLicenseDetail.applicationDocuments &&

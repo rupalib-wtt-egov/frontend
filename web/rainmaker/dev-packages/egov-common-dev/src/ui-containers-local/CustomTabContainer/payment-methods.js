@@ -63,6 +63,7 @@ const onIconClick = (state, dispatch, index) => {
   }
 };
 
+
 export const payeeDetails = getCommonContainer({
   paidBy: getSelectField({
     label: {
@@ -336,3 +337,32 @@ export const card = getCommonContainer({
 export const cash = getCommonContainer({
   payeeDetails
 });
+
+
+export const paymentMethods= [
+  {
+    code : "CASH",
+    tabButton: "COMMON_CASH",    
+    tabIcon: "Dashboard",
+    tabContent: { cash }
+  },
+  {
+    code : "CHEQUE",
+    tabButton: "COMMON_CHEQUE",
+    tabIcon: "Schedule",
+    tabContent: { cheque }
+  },
+  {
+    code : "DD",
+    tabButton: "COMMON_DD",
+    tabIcon: "Schedule",
+    tabContent: { demandDraft }
+  },
+  {
+    code : "CARD",
+    tabButton: "COMMON_CREDIT_DEBIT_CARD",
+    tabIcon: "Schedule",
+    tabContent: { card }
+  }
+]
+

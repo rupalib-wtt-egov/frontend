@@ -102,8 +102,8 @@ export const getSearchResults = async queryObject => {
             queryObject
         );
         let result = findAndReplace(response, null, "NA");
-        let waterSource = result.WaterConnection[0].waterSource.split(".")[0];
-        let waterSubSource = result.WaterConnection[0].waterSource.split(".")[1];
+        let waterSource = result.WaterConnection[0].waterSource.includes("null") ? "NA" : result.WaterConnection[0].waterSource.split(".")[0];
+        let waterSubSource = result.WaterConnection[0].waterSource.includes("null") ? "NA" : result.WaterConnection[0].waterSource.split(".")[1];
         result.WaterConnection[0].waterSource = waterSource;
         result.WaterConnection[0].waterSubSource = waterSubSource;
         return result;
@@ -237,7 +237,11 @@ export const getMyApplicationResults = async (queryObject, dispatch) => {
                         );
                         if (data && data !== undefined) {
                             if (data.Bill !== undefined && data.Bill.length > 0) {
-                                response.WaterConnection[i].due = data.Bill[0].totalAmount
+                                if (data.Bill[0].totalAmount !== 0) {
+                                    response.WaterConnection[i].due = data.Bill[0].totalAmount
+                                } else {
+                                    response.WaterConnection[i].due = "NA"
+                                }
                             }
 
                         } else {
@@ -284,7 +288,11 @@ export const getSWMyApplicationResults = async (queryObject, dispatch) => {
                         );
                         if (data && data !== undefined) {
                             if (data.Bill !== undefined && data.Bill.length > 0) {
-                                response.SewerageConnections[i].due = data.Bill[0].totalAmount
+                                if (data.Bill[0].totalAmount !== 0) {
+                                    response.SewerageConnections[i].due = data.Bill[0].totalAmount
+                                } else {
+                                    response.SewerageConnections[i].due = "NA"
+                                }
                             }
 
                         } else {
@@ -1485,9 +1493,20 @@ export const downloadApp = async (wnsConnection, type, mode = "download") => {
 
     wnsConnection[0].tenantName = tenantName.toUpperCase();
     const appNo = wnsConnection[0].applicationNo;
+
     let queryStr = [{ key: "tenantId", value: getTenantId().split('.')[0] }];
     let apiUrl, appService, estKey, queryObjectForEst
     if (wnsConnection[0].service === "WATER") {
+
+        // for Estimate api 
+        if (wnsConnection[0].rainWaterHarvesting !== undefined && wnsConnection[0].rainWaterHarvesting !== null) {
+            if (wnsConnection[0].rainWaterHarvesting === 'SCORE_YES') {
+                wnsConnection[0].rainWaterHarvesting = true
+            } else if (wnsConnection[0].rainWaterHarvesting === 'SCORE_NO') {
+                wnsConnection[0].rainWaterHarvesting = false
+            }
+        }
+
         apiUrl = "ws-calculator/waterCalculator/_estimate";
         appService = "ws-applicationwater";
         queryObjectForEst = [{
@@ -1560,6 +1579,13 @@ export const downloadApp = async (wnsConnection, type, mode = "download") => {
 
         if (type === 'application') {
             if (wnsConnection[0].service === "WATER") {
+                if (wnsConnection[0].rainWaterHarvesting !== undefined && wnsConnection[0].rainWaterHarvesting !== null) {
+                    if (wnsConnection[0].rainWaterHarvesting === true) {
+                        wnsConnection[0].rainWaterHarvesting = 'SCORE_YES'
+                    } else {
+                        wnsConnection[0].rainWaterHarvesting = 'SCORE_NO'
+                    }
+                }
                 obj = {
                     WaterConnection: wnsConnection
                 }
