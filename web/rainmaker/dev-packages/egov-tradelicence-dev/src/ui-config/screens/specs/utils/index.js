@@ -1825,24 +1825,80 @@ export const updateDropDowns = async (
 };
 
 //doc changes
-const Documents = [
+const documentsType = [
   {
-    applicationType : "NEW",
-    code : "OWNERIDPROOF",
+    "code" : "OWNERIDPROOF",
+    "allowedFormat" : ["image/*", ".pdf", ".png", ".jpeg"],
+    "maxFileSize": 6000
   },
   {
-    applicationType : "NEW",
-    code : "OWNERSHIPPROOF",
+    "code" : "OWNERSHIPPROOF",
+    "allowedFormat" : ["image/*", ".pdf", ".png", ".jpeg"],
+    "maxFileSize": 6000
   },
   {
-    applicationType : "NEW",
-    code : "OWNERPHOTO",
+    "code" : "OWNERPHOTO",
+    "allowedFormat" : ["image/*", ".png", ".jpeg"],
+    "maxFileSize": 3000
   },
   {
-    applicationType : "RENEWAL",
-    code : "OLDLICENCENO",
-  },
+    "code" : "OLDLICENCENO",
+    "allowedFormat" : ["image/*", ".pdf", ".png", ".jpeg"],
+    "maxFileSize": 6000
+  }
+]
 
+const documentObj = [
+  {
+    "allowedDocs" : [
+      {
+        "documentType" : "OWNERIDPROOF",
+        "applicationType": ["NEW","RENEWAL"],
+        "required": true
+      },
+      {
+        "documentType" : "OWNERSHIPPROOF" ,
+        "applicationType": ["NEW","RENEWAL"],
+        "required": true
+      },
+      {
+        "documentType" : "OWNERPHOTO",
+        "applicationType": ["NEW","RENEWAL"],
+        "required": true
+      },
+      {
+        "documentType" :"OLDLICENCENO",
+        "applicationType": ["RENEWAL"],
+        "required": true
+      }
+    ],
+    "tradeType" : "GOODS"
+  },
+  {
+    "allowedDocs" : [
+      {
+        "documentType" : "OWNERIDPROOF",
+        "applicationType": "NEW",
+        "required": true
+      },
+      {
+       "documentType" : "OWNERSHIPPROOF" ,
+       "applicationType": "NEW",
+       "required": true
+      },
+      {
+        "documentType" : "OWNERPHOTO",
+        "applicationType": "NEW",
+        "required": true
+      },
+      {
+        "documentType" :"OLDLICENCENO",
+        "applicationType": "NEW",
+        "required": true
+      }
+    ],
+    "tradeType" : "SERVICES"
+  }
 ]
 
 
@@ -2010,42 +2066,42 @@ const documentList =  [
 // ]
 
 export const getDocList = (state, dispatch) => {
-  const tradeSubTypes = get(
+  const tradeUnits = get(
     state.screenConfiguration.preparedFinalObject,
-    "Licenses[0].tradeLicenseDetail.tradeUnits"
+    "Licenses[0].tradeLicenseDetail.tradeUnits[0]"
   );
+  const applicationType = getQueryArg(window.location.href , "action") === "EDITRENEWAL" ? "RENEWAL" : "NEW";
+  console.log("====1",applicationType)
 
-  const applicationType = get(state.screenConfiguration.preparedFinalObject ,"Licenses[0].applicationType" );
 
-  const tradeSubCategories = get(
-    state.screenConfiguration.preparedFinalObject,
-    "applyScreenMdmsData.TradeLicense.MdmsTradeType"
-  );
-  let selectedTypes = [];
-  tradeSubTypes && tradeSubTypes.forEach(tradeSubType => {
-    selectedTypes.push(
-      filter(tradeSubCategories, {
-        code: tradeSubType.tradeType
-      })
-    );
-  });
-  
-  let applicationDocArray = [];
-  selectedTypes && selectedTypes.forEach(tradeSubTypeDoc => {
-  const newAppDocuments =  documentList.filter(item => item.applicationType === "NEW");
-  const renewalAppDocuments =  documentList.filter(item => item.applicationType === "NEW" && item.applicationType === "RENEWAL");
-  // const  applicationarrayTemp= getQueryArg(window.location.href , "action") === "EDITRENEWAL" || applicationType==="RENEWAL" ? tradeSubTypeDoc[0].applicationDocument.filter(item => item.applicationType === "RENEWAL")[0].documentList : tradeSubTypeDoc[0].applicationDocument.filter(item => item.applicationType === "NEW")[0].documentList;
-  const  applicationarrayTemp= getQueryArg(window.location.href , "action") === "EDITRENEWAL" || applicationType==="RENEWAL" ? renewalAppDocuments : newAppDocuments;
-    applicationDocArray = [
-      ...applicationDocArray,
-      ...applicationarrayTemp 
-    ];
-  });
+  const documentObjArray = documentObj && documentObj.filter(item => item.tradeType === tradeUnits.tradeType.split(".")[0]);
+  console.log("====2",documentObjArray)
 
-  function onlyUnique(value, index, self) {
-    return self.indexOf(value) === index;
-  }
-  applicationDocArray = applicationDocArray.filter(onlyUnique);
+  const applicationDocArray = documentsType && documentsType.reduce((result,item)=>{
+    const transformedDocObj = documentObjArray[0].allowedDocs.filter(docObj => docObj.documentType === item.code)[0];
+    console.log("====3",transformedDocObj)
+    console.log("=========>",transformedDocObj.applicationType.includes(applicationType) );
+    console.log("=====>applicationType" ,applicationType)
+    if(transformedDocObj.applicationType.includes(applicationType)){
+      result.push(
+        {
+          code : item.code,
+          maxFileSize : item.maxFileSize,
+          required :transformedDocObj.required,
+          formatProps : {
+            accept : item.allowedFormat.join(",")
+          },
+          description : `COMMON_${item.code}_DESCRIPTION`,
+          statement : `COMMON_${item.code}_STATEMENT`
+        }
+      )
+    }    
+    console.log("====4" , result)
+    return result;
+  },[])
+
+  console.log("====5" , applicationDocArray)
+
   let applicationDocument = prepareDocumentTypeObjNew(applicationDocArray);
   dispatch(
     prepareFinalObject(
@@ -2079,7 +2135,84 @@ export const getDocList = (state, dispatch) => {
         applicationDocsReArranged
       )
     );
-};
+
+}
+
+
+
+
+
+// export const getDocList = (state, dispatch) => {
+//   const tradeSubTypes = get(
+//     state.screenConfiguration.preparedFinalObject,
+//     "Licenses[0].tradeLicenseDetail.tradeUnits"
+//   );
+
+//   const applicationType = get(state.screenConfiguration.preparedFinalObject ,"Licenses[0].applicationType" );
+
+//   const tradeSubCategories = get(
+//     state.screenConfiguration.preparedFinalObject,
+//     "applyScreenMdmsData.TradeLicense.MdmsTradeType"
+//   );
+//   let selectedTypes = [];
+//   tradeSubTypes && tradeSubTypes.forEach(tradeSubType => {
+//     selectedTypes.push(
+//       filter(tradeSubCategories, {
+//         code: tradeSubType.tradeType
+//       })
+//     );
+//   });
+  
+//   let applicationDocArray = [];
+//   selectedTypes && selectedTypes.forEach(tradeSubTypeDoc => {
+//   const newAppDocuments =  documentList.filter(item => item.applicationType === "NEW");
+//   const renewalAppDocuments =  documentList.filter(item => item.applicationType === "NEW" && item.applicationType === "RENEWAL");
+//   // const  applicationarrayTemp= getQueryArg(window.location.href , "action") === "EDITRENEWAL" || applicationType==="RENEWAL" ? tradeSubTypeDoc[0].applicationDocument.filter(item => item.applicationType === "RENEWAL")[0].documentList : tradeSubTypeDoc[0].applicationDocument.filter(item => item.applicationType === "NEW")[0].documentList;
+//   const  applicationarrayTemp= getQueryArg(window.location.href , "action") === "EDITRENEWAL" || applicationType==="RENEWAL" ? renewalAppDocuments : newAppDocuments;
+//     applicationDocArray = [
+//       ...applicationDocArray,
+//       ...applicationarrayTemp 
+//     ];
+//   });
+
+//   function onlyUnique(value, index, self) {
+//     return self.indexOf(value) === index;
+//   }
+//   applicationDocArray = applicationDocArray.filter(onlyUnique);
+//   let applicationDocument = prepareDocumentTypeObjNew(applicationDocArray);
+//   dispatch(
+//     prepareFinalObject(
+//       "LicensesTemp[0].applicationDocuments",
+//       applicationDocument
+//     )
+//   );
+
+//   //REARRANGE APPLICATION DOCS FROM TL SEARCH IN EDIT FLOW
+//   let applicationDocs = get(
+//     state.screenConfiguration.preparedFinalObject,
+//     "Licenses[0].tradeLicenseDetail.applicationDocuments",
+//     []
+//   );  
+//   let applicationDocsReArranged =
+//     applicationDocs &&
+//     applicationDocs.length &&
+//     applicationDocument.reduce((acc,item) => {
+//       const index = applicationDocs.findIndex(
+//         i => i.documentType === item.name
+//       );
+//       if(index >- 1){
+//         acc.push(applicationDocs[index])
+//       }       
+//       return acc;
+//     },[])
+//     applicationDocsReArranged &&
+//     dispatch(
+//       prepareFinalObject(
+//         "Licenses[0].tradeLicenseDetail.applicationDocuments",
+//         applicationDocsReArranged
+//       )
+//     );
+// };
 
 export const setOwnerShipDropDownFieldChange = (state, dispatch, payload) => {
   let tradeSubOwnershipCat = get(

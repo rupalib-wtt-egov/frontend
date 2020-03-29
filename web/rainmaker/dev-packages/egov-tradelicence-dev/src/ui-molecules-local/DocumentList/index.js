@@ -120,7 +120,7 @@ class DocumentList extends Component {
   handleDocument = async (file, fileStoreId) => {
     let { uploadedDocIndex, uploadedDocuments } = this.state;
     const { prepareFinalObject, documents, tenantId } = this.props;
-    const { jsonPath, name } = documents[uploadedDocIndex];
+    const { jsonPath, code } = documents[uploadedDocIndex];
     const fileUrl = await getFileUrlFromAPI(fileStoreId);
     uploadedDocuments = {
       ...uploadedDocuments,
@@ -129,7 +129,7 @@ class DocumentList extends Component {
           fileName: file.name,
           fileStoreId,
           fileUrl: Object.values(fileUrl)[0],
-          documentType: name,
+          documentType: code,
           tenantId
         }
       ]
@@ -141,7 +141,7 @@ class DocumentList extends Component {
       fileName: file.name,
       fileStoreId,
       fileUrl: Object.values(fileUrl)[0],
-      documentType: name,
+      documentType: code,
       tenantId
     });
     this.setState({ uploadedDocuments });
@@ -214,8 +214,8 @@ class DocumentList extends Component {
                   </Grid>
                   <Grid item={true} xs={6} sm={6} align="left">
                     <LabelContainer
-                      labelName={documentTypePrefix + document.name}
-                      labelKey={documentTypePrefix + document.name}
+                      labelName={documentTypePrefix + document.code}
+                      labelKey={documentTypePrefix + document.code}
                       style={documentTitle}
                     />
                     {document.required && (
@@ -223,14 +223,14 @@ class DocumentList extends Component {
                     )}
                     <Typography variant="caption">
                       <LabelContainer
-                        labelName={document.statement}
+                       // {/* labelName={document.statement} */}
                         labelKey={document.statement}
                       />
                     </Typography>
                     <Typography variant="caption">
                       <LabelContainer
-                     labelName={document.description.labelName}
-                     labelKey={document.description.labelKey}
+                     //labelName={document.description.labelName}
+                     labelKey={document.description}
                      //labelName={currentDocumentProps[0].description.labelName}
                      //labelKey={currentDocumentProps[0].description.labelKey}
                       />

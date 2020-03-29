@@ -45,13 +45,6 @@ export const pushTheDocsUploadedToRedux = async (state, dispatch) => {
                     })
                 })
                 dispatch(prepareFinalObject("applyScreen.documents", uploadedDocs));
-                let docArrayFromFileStore = await setDocsForEditFlow(state);
-                uploadedDocs.forEach(obj => {
-                    let element = obj.fileStoreId;
-                    Object.keys(docArrayFromFileStore).forEach(resp => {
-                        docArrayFromFileStore[resp].forEach(arr => { if (arr.fileStoreId === element) { obj.fileName = arr.fileName; } })
-                    })
-                })
                 let docs = get(state, "screenConfiguration.preparedFinalObject");
                 await setDocuments(docs, "applyScreen.documents", "UploadedDocs", dispatch, "WS");
                 await setDocuments(docs, "applyScreen.documents", "DocumentsData", dispatch, "WS");
